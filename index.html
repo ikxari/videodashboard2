@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="application-name" content="Aurevia">
+<meta name="theme-color" content="#0a0a0c">
+<meta name="robots" content="noindex,nofollow">
+<title>Aurevia</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c6cf0'/%3E%3Cstop offset='1' stop-color='%23a996ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='Arial' font-size='34' font-weight='bold' fill='%23fff' text-anchor='middle'%3EAu%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0c; --bg2:#101012; --surface:#15151a; --surface2:#1c1c22;
+  --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.13);
+  --txt:#e9eaf2; --muted:#8b90a6; --faint:#5c6178;
+  --accent:#c9a24b; --accent2:#e8c877; --accent-ink:#f0d9a0;
+  --ok:#3ddc97; --warn:#ffc15e; --err:#ff6b7d;
+  --r:14px; --r-lg:20px;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.4);
+  --shadow-lg:0 26px 64px rgba(0,0,0,.6);
+  --ease:cubic-bezier(.16,1,.3,1); --side:248px;
+  --font:'Jost',system-ui,sans-serif;
+  --font-d:'Space Grotesk','Jost',sans-serif;
+  --font-m:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.aurora{position:fixed;inset:0;z-index:-1;background:
+  radial-gradient(900px 520px at 12% -12%, rgba(201,162,75,.16), transparent 58%),
+  radial-gradient(760px 520px at 102% -4%, rgba(180,145,60,.08), transparent 55%)}
+h2.pt,.denied h2,.wordmark,.sbrand,.cdnum,.bhead b,.mbody h3,.sbig h3,.snum,.wtitle,.ititle{font-family:var(--font-d);letter-spacing:-.2px}
+#shLink,#aOtp,#sOtpI,#apiU{font-family:var(--font-m)}
+.pill,.snav,.uname{font-family:var(--font)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes ci{from{transform:translateY(16px) scale(.98);opacity:0}}
+@keyframes ti{from{transform:translateX(30px);opacity:0}}
+@keyframes sp{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+a{color:var(--accent2);text-decoration:none}
+::selection{background:rgba(201,162,75,.35)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1400;border:none;border-radius:12px;font-weight:700;font-family:inherit;font-size:14px;min-height:42px;padding:10px 18px;cursor:pointer;transition:transform .15s var(--ease),box-shadow .2s var(--ease),filter .15s;user-select:none}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(201,162,75,.4);filter:brightness(1.05)}
+.btn:active{transform:translateY(0) scale(.97)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--txt)}
+.btn.ghost:hover{border-color:var(--accent2);background:rgba(201,162,75,.1)}
+.btn.sm{min-height:38px;padding:8px 14px;font-size:13px;border-radius:11px}
+.btn.err{background:linear-gradient(135deg,#ff6b7d,#ff93a0)}
+.btn.sm{white-space:nowrap}
+.blab{margin-left:1px}
+.pwwrap{position:relative}
+.pwwrap .inp{padding-right:46px}
+.pweye{position:absolute;right:6px;top:0;height:100%;display:flex;align-items:center;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 10px;line-height:1}
+.pweye:hover{color:var(--txt)}
+.iconbtn2{width:38px;height:38px;flex:none;border-radius:11px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s}
+.iconbtn2:hover{color:var(--txt);border-color:var(--accent2);background:rgba(201,162,75,.1)}
+.iconbtn2.danger:hover{color:var(--err);border-color:var(--err);background:rgba(255,107,125,.1)}
+.inp,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:12px;color:var(--txt);font-family:inherit;font-size:16px;padding:12px 14px;outline:none;transition:border-color .2s,box-shadow .2s}
+.inp:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,162,75,.18)}
+label.fld{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;text-transform:uppercase;letter-spacing:.4px;backdrop-filter:blur(6px)}
+.b-video{background:rgba(201,162,75,.92);color:#1a1400}
+.b-pdf{background:rgba(255,107,125,.9);color:#fff}
+.b-note{background:rgba(61,220,151,.9);color:#05140d}
+.b-folder{background:rgba(255,193,94,.92);color:#2a1c00}
+.b-ok{background:rgba(61,220,151,.16);color:#8ff0c6}
+.b-warn{background:rgba(255,193,94,.16);color:#ffd79a}
+.b-err{background:rgba(255,107,125,.16);color:#ffb0ba}
+.b-mut{background:rgba(255,255,255,.1);color:#d4d7e4}
+.hide{display:none!important}
+
+.wordmark,.sbrand{display:inline-flex;align-items:center;gap:10px;font-weight:700}
+.dot{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#1a1400;flex-shrink:0;box-shadow:0 4px 12px rgba(201,162,75,.4)}
+
+/* loader / toast / modal */
+#loader{position:fixed;inset:0;background:rgba(5,6,12,.6);display:none;align-items:center;justify-content:center;z-index:9000;backdrop-filter:blur(3px)}
+#loader.on{display:flex}
+.spin{width:42px;height:42px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--accent2);border-radius:50%;animation:sp .8s linear infinite}
+#toasts{position:fixed;top:16px;right:16px;left:16px;z-index:9500;display:flex;flex-direction:column;gap:10px;align-items:flex-end;pointer-events:none}
+.toast{pointer-events:auto;background:var(--surface2);border:1px solid var(--line2);border-left:4px solid var(--accent);border-radius:12px;padding:12px 16px;font-size:14px;max-width:360px;box-shadow:var(--shadow);animation:ti .25s var(--ease)}
+.toast.ok{border-left-color:var(--ok)} .toast.err{border-left-color:var(--err)}
+#modalWrap{position:fixed;inset:0;background:rgba(4,5,10,.74);z-index:9998;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 14px;backdrop-filter:blur(4px)}
+#modalWrap.on{display:flex}
+.modal{width:100%;max-width:640px;margin:auto;max-height:92dvh;overflow:auto;animation:ci .3s var(--ease)}
+.modal.wide{max-width:1000px}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);border-radius:var(--r-lg) var(--r-lg) 0 0;z-index:2}
+.mbody{padding:20px 22px}
+.x{background:transparent;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1;transition:color .15s;padding:2px 8px;border-radius:8px}
+.x:hover{color:var(--txt);background:var(--surface2)}
+
+/* auth */
+#authView{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:18px}
+.authcard{width:100%;max-width:960px;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;animation:fadeUp .5s var(--ease)}
+.abrand{padding:46px 40px;background:linear-gradient(165deg,rgba(201,162,75,.2),rgba(180,145,60,.05));border-right:1px solid var(--line);position:relative}
+.abrand .logo{font-size:30px}
+.abrand .tag{color:var(--muted);margin-top:12px;font-size:15px;line-height:1.55;max-width:300px}
+.feat{display:flex;gap:13px;align-items:flex-start;margin-top:22px;animation:fadeUp .5s var(--ease) backwards}
+.feat:nth-child(3){animation-delay:.05s}.feat:nth-child(4){animation-delay:.1s}.feat:nth-child(5){animation-delay:.15s}.feat:nth-child(6){animation-delay:.2s}
+.feat .ic{width:42px;height:42px;border-radius:12px;background:rgba(201,162,75,.16);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.feat b{font-size:14px} .feat span{color:var(--muted);font-size:12.5px}
+.aform{padding:42px 40px}
+.tabs{display:flex;gap:8px;margin-bottom:24px;background:var(--bg);padding:5px;border-radius:13px;border:1px solid var(--line)}
+.tab{flex:1;padding:10px;text-align:center;border-radius:9px;cursor:pointer;font-weight:600;font-size:14px;color:var(--muted);transition:all .2s var(--ease)}
+.tab.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1400}
+
+/* ===== APP SHELL (sidebar) ===== */
+#appView{display:none;min-height:100dvh}
+#appView.ready{display:flex}
+#sideOverlay{display:none}
+.sidebar{width:var(--side);flex-shrink:0;position:sticky;top:0;height:100dvh;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 14px;z-index:60}
+.sbrand{padding:6px 10px 18px;font-size:20px}
+.snav{display:flex;flex-direction:column;gap:4px}
+.pill{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px 14px;border-radius:12px;border:none;background:transparent;color:var(--muted);font-weight:600;font-size:14px;cursor:pointer;transition:all .18s var(--ease);position:relative}
+.pill .ni{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.pill:hover{background:var(--surface);color:var(--txt)}
+.pill.on{background:linear-gradient(100deg,rgba(201,162,75,.22),rgba(201,162,75,.05));color:#f0d9a0}
+.pill.on::before{content:"";position:absolute;left:3px;top:10px;bottom:10px;width:3px;border-radius:3px;background:linear-gradient(var(--accent),var(--accent2))}
+.suser{margin-top:auto;border-top:1px solid var(--line);padding-top:14px}
+.ucard{display:flex;align-items:center;gap:11px;padding:4px 6px}
+.uav{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a1400;flex-shrink:0}
+.uname{font-weight:600;font-size:14px;line-height:1.2}
+.urole{font-size:11.5px;color:var(--muted);margin-top:1px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.apptop{display:none;align-items:center;gap:12px;padding:12px 16px;position:sticky;top:0;background:rgba(11,13,22,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);z-index:55}
+.menuBtn{width:40px;height:40px;border-radius:11px;border:1px solid var(--line2);background:transparent;color:var(--txt);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.spacer{flex:1;min-width:8px}
+.wrap{width:100%;max-width:1400px;margin:0 auto;padding:28px 28px 120px}
+.page{display:none} .page.on{display:block;animation:fadeUp .35s var(--ease)}
+h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
+.psub{color:var(--muted);font-size:14px;margin-bottom:22px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:14px;margin-bottom:6px}
+.stat{position:relative;background:linear-gradient(160deg,var(--surface2),var(--surface));border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;overflow:hidden;transition:transform .2s var(--ease),border-color .2s;animation:fadeUp .4s var(--ease) backwards}
+.stat:hover{transform:translateY(-4px);border-color:var(--line2)}
+.stat .si{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;background:rgba(201,162,75,.16);margin-bottom:14px}
+.snum{font-size:32px;font-weight:700;line-height:1}
+.slbl{color:var(--muted);font-size:12.5px;margin-top:5px}
+.stat::after{content:"";position:absolute;left:0;right:30%;bottom:0;height:3px;background:linear-gradient(90deg,var(--accent),transparent)}
+
+/* week sections */
+.wsec{margin-top:32px;animation:fadeUp .4s var(--ease)}
+.whead{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.wtitle{font-size:18px;font-weight:700}
+.wpill{font-size:11.5px;color:var(--accent-ink);background:rgba(201,162,75,.15);padding:3px 11px;border-radius:20px;font-weight:600}
+.wline{flex:1;height:1px;background:var(--line)}
+.psub2{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin-top:24px;margin-bottom:2px;font-weight:600}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:12px 0 6px}
+.wcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;transition:transform .2s var(--ease),border-color .2s,background .2s;animation:fadeUp .35s var(--ease) backwards}
+.wcard:hover{transform:translateY(-3px);border-color:var(--line2)}
+.wcard.on{border-color:var(--accent);background:linear-gradient(160deg,rgba(201,162,75,.2),var(--surface))}
+.wic{width:40px;height:40px;border-radius:12px;background:rgba(201,162,75,.15);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:10px}
+.wc-t{font-weight:700;font-size:15px}
+.wc-n{color:var(--muted);font-size:12px;margin-top:2px}
+.recent-sec{margin-top:32px}
+.reclist{padding:6px}
+.recrow{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;cursor:pointer;transition:background .15s}
+.recrow:hover{background:rgba(255,255,255,.04)}
+.rec-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.rec-main{flex:1;min-width:0}
+.rec-t{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-m{color:var(--muted);font-size:11.5px;margin-top:1px}
+.rec-time{color:var(--faint);font-size:12px;white-space:nowrap;flex-shrink:0}
+
+/* media cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:18px}
+.icard{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;display:flex;flex-direction:column;transition:transform .25s var(--ease),box-shadow .25s,border-color .25s;animation:fadeUp .4s var(--ease) backwards}
+.icard:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--line2)}
+.ithumb{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1d2c,#0d0f18);overflow:hidden}
+.ithumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s var(--ease)}
+.icard:hover .ithumb img{transform:scale(1.07)}
+.ithumb .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:46px;opacity:.3}
+.tov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,8,14,0) 45%,rgba(7,8,14,.7));pointer-events:none}
+.tchips{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:6px;pointer-events:none}
+.playb{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.88);width:54px;height:54px;border-radius:50%;background:rgba(201,162,75,.95);display:flex;align-items:center;justify-content:center;font-size:19px;color:#1a1400;opacity:0;transition:all .25s var(--ease);box-shadow:0 10px 28px rgba(201,162,75,.55);pointer-events:none;padding-left:3px}
+.icard:hover .playb{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.ibody{padding:14px 15px 14px;display:flex;flex-direction:column;flex:1}
+.ititle{font-weight:700;font-size:15.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.idesc{color:var(--muted);font-size:12.5px;line-height:1.45;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.iacts{display:flex;gap:7px;margin-top:14px;align-items:center}
+.iacts .btn{flex:1;min-width:0}
+
+/* table */
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.tbl td{padding:12px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle}
+.tbl tbody tr{transition:background .15s}
+.tbl tbody tr:hover{background:rgba(255,255,255,.03)}
+.scrollx{overflow-x:auto}
+
+/* viewer */
+.vframe{width:100%;height:68dvh;border:none;border-radius:14px;background:#000}
+.vwrap{position:relative;border-radius:14px;overflow:hidden}
+/* search bar */
+.searchbar{position:relative;margin:22px 0 4px}
+.searchbar .inp{padding-left:42px;padding-right:40px;background:var(--surface)}
+.si2{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.7;pointer-events:none}
+.searchx{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:6px 10px;border-radius:8px}
+.searchx:hover{color:var(--txt)}
+/* view-count badge on card */
+.vcount{position:absolute;bottom:10px;right:10px;background:rgba(8,8,10,.72);color:#f0d9a0;font-size:11px;font-weight:600;padding:3px 9px;border-radius:7px;backdrop-filter:blur(4px);border:1px solid rgba(201,162,75,.25)}
+/* leak-deterrent watermark overlay */
+.wm{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;display:flex;flex-wrap:wrap;gap:34px 46px;padding:24px;transform:rotate(-24deg) scale(1.5);transform-origin:center;opacity:.07}
+.wm span{font-family:var(--font-m);font-size:12px;color:#f0d9a0;white-space:nowrap;letter-spacing:1px}
+.notebody{white-space:pre-wrap;line-height:1.7;font-size:15px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:20px;max-height:70dvh;overflow:auto}
+
+/* share landing */
+#shareView{display:none;min-height:100dvh;padding:24px 18px}
+.sbar{width:100%;max-width:1100px;margin:0 auto 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cdbox{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line2);border-radius:14px;padding:10px 16px}
+.cdnum{font-size:20px;font-weight:700;color:#fff;letter-spacing:.5px;font-variant-numeric:tabular-nums;animation:pulse 2s ease-in-out infinite}
+.sbig{width:100%;max-width:1100px;margin:auto}
+.denied{max-width:460px;margin:9dvh auto;text-align:center;padding:44px 30px;animation:ci .4s var(--ease)}
+.denied .em{font-size:54px}
+
+/* bot */
+#botFab{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:17px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#1a1400;font-size:24px;cursor:pointer;z-index:200;box-shadow:0 14px 32px rgba(201,162,75,.5);transition:transform .2s var(--ease)}
+#botFab:hover{transform:translateY(-3px) scale(1.05)}
+#botFab:active{transform:scale(.95)}
+#botPanel{position:fixed;bottom:92px;right:24px;width:372px;max-width:calc(100vw - 28px);height:530px;max-height:calc(100dvh - 120px);z-index:200;display:none;flex-direction:column;overflow:hidden;transform-origin:bottom right;animation:ci .25s var(--ease)}
+#botPanel.on{display:flex}
+.bhead{display:flex;align-items:center;gap:11px;padding:15px 17px;border-bottom:1px solid var(--line)}
+.bmsgs{flex:1;overflow:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
+.bm{max-width:84%;padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.5;animation:fadeUp .25s var(--ease)}
+.bm.bot{background:rgba(201,162,75,.16);align-self:flex-start;border-bottom-left-radius:4px}
+.bm.me{background:var(--surface2);align-self:flex-end;border-bottom-right-radius:4px}
+.bchips{display:flex;gap:6px;flex-wrap:wrap;padding:0 15px 8px}
+.bchip{font-size:12px;padding:7px 11px;border-radius:20px;border:1px solid var(--line2);cursor:pointer;color:var(--muted);transition:all .15s}
+.bchip:hover{color:var(--txt);border-color:var(--accent2)}
+.binp{display:flex;gap:8px;padding:13px 15px;border-top:1px solid var(--line)}
+.footer{text-align:center;color:var(--faint);font-size:11.5px;padding:24px}
+.banner{width:100%;max-width:1400px;margin:14px auto 0;padding:11px 16px;border-radius:12px;font-size:13px;display:none}
+.banner.on{display:block}
+.banner.bad{background:rgba(255,107,125,.14);border:1px solid rgba(255,107,125,.3)}
+.banner.good{background:rgba(61,220,151,.12);border:1px solid rgba(61,220,151,.3)}
+
+/* uploads */
+.uprow{display:flex;gap:8px;flex-wrap:wrap}
+.uprow .inp{flex:1;min-width:150px}
+.thumbprev{width:100%;max-height:150px;object-fit:cover;border-radius:12px;margin-top:10px;border:1px solid var(--line);display:none}
+
+/* ===== responsive ===== */
+@media(max-width:900px){
+  .sidebar{position:fixed;left:0;top:0;transform:translateX(-100%);transition:transform .28s var(--ease);box-shadow:var(--shadow-lg)}
+  #appView.side-open .sidebar{transform:none}
+  #sideOverlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s;z-index:59}
+  #appView.side-open #sideOverlay{opacity:1;pointer-events:auto}
+  .apptop{display:flex}
+  .wrap{padding:22px 18px 110px}
+}
+@media(max-width:820px){ .authcard{grid-template-columns:1fr} .abrand{display:none} .aform{padding:34px 26px} }
+@media(max-width:560px){
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:13px}
+  h2.pt{font-size:22px}
+  .wrap{padding:18px 15px 110px}
+  .mbody{padding:16px}
+  .mhead{padding:15px 17px}
+  .vframe{height:56dvh}
+  .ibody{padding:12px 13px}
+  .ititle{font-size:14.5px}
+  #botPanel{right:14px;left:14px;width:auto}
+  #botFab{bottom:18px;right:18px}
+  .playb{width:46px;height:46px;font-size:17px}
+  .blab{display:none}
+  .tbl .btn.sm{padding:9px 11px;min-width:40px;justify-content:center}
+  .tbl td:last-child{white-space:normal}
+}
+@media(max-width:380px){ .grid{grid-template-columns:1fr 1fr} }
+@media(prefers-reduced-motion:reduce){ *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<div id="loader"><div class="spin"></div></div>
+<div id="toasts"></div>
+<div id="modalWrap"><div class="modal card" id="modal"></div></div>
+
+<!-- ===== SHARE LANDING ===== -->
+<section id="shareView"></section>
+
+<!-- ===== AUTH ===== -->
+<section id="authView">
+  <div class="authcard card">
+    <div class="abrand">
+      <div class="logo wordmark"><span class="dot">Au</span> Aurevia</div>
+      <div class="tag">A premium home for your videos, documents and notes — shared exactly on your terms.</div>
+      <div class="feat"><div class="ic">🔑</div><div><b>Mobile / email login</b><br><span>Password login, code-based reset.</span></div></div>
+      <div class="feat"><div class="ic">⏳</div><div><b>Time-bound links</b><br><span>Share a link, it counts down and locks.</span></div></div>
+      <div class="feat"><div class="ic">🛡️</div><div><b>Admin approval</b><br><span>Only approved people get in.</span></div></div>
+      <div class="feat"><div class="ic">🎬</div><div><b>Beautiful library</b><br><span>Thumbnails, weeks and clean previews.</span></div></div>
+    </div>
+    <div class="aform">
+      <div class="tabs">
+        <div class="tab on" id="tabLogin" onclick="setAuthMode('login')">Log in</div>
+        <div class="tab" id="tabSignup" onclick="setAuthMode('signup')">Sign up</div>
+      </div>
+      <div id="authBody"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== APP ===== -->
+<section id="appView">
+  <div id="sideOverlay" onclick="closeSide()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sbrand"><span class="dot">Au</span> Aurevia</div>
+    <nav class="snav" id="nav"></nav>
+    <div class="suser" id="uchip"></div>
+  </aside>
+  <div class="main">
+    <header class="apptop">
+      <button class="menuBtn" onclick="toggleSide()">☰</button>
+      <div class="wordmark" style="font-size:18px"><span class="dot">Au</span> Aurevia</div>
+    </header>
+    <div class="banner" id="apiBanner"></div>
+    <div class="wrap">
+      <div class="page on" id="pg-library"></div>
+      <div class="page" id="pg-shares"></div>
+      <div class="page" id="pg-users"></div>
+      <div class="page" id="pg-add"></div>
+    </div>
+    <div class="footer" id="footer"></div>
+  </div>
+  <button id="botFab" onclick="toggleBot()">💬</button>
+  <div id="botPanel" class="card">
+    <div class="bhead"><div class="uav">Au</div><div><b>Aurevia Assistant</b><div style="font-size:11px;color:var(--ok)">● online</div></div></div>
+    <div class="bmsgs" id="bmsgs"></div>
+    <div class="bchips" id="bchips"></div>
+    <div class="binp"><input class="inp" id="binp" placeholder="Ask anything…" onkeydown="if(event.key==='Enter')botSend()"><button class="btn sm" onclick="botSend()">➤</button></div>
+  </div>
+</section>
+
+<script>
+/* ============ CONFIG ============ */
+const API_DEFAULT = 'PASTE_YOUR_EXEC_URL_HERE';
+let API = localStorage.getItem('aur_api') || API_DEFAULT;
+const BRAND = 'Aurevia';
+const APP_VERSION = '2.0.0';
+function apiOk(u){ return /\/macros\/(s|.*\/s)\/[^/]+\/exec$/.test(String(u||'')); }
+
+/* ============ STATE ============ */
+let SESSION = null;
+let ITEMS = [];
+let CD_TIMER = null, SHARE_ID = null, BOT_BRAIN = {taught:[], stats:{}};
+
+/* ============ HELPERS ============ */
+const $ = id => document.getElementById(id);
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function showLoader(){ $('loader').classList.add('on'); }
+function hideLoader(){ $('loader').classList.remove('on'); }
+function toast(msg, type){ const t=document.createElement('div'); t.className='toast '+(type||''); t.textContent=msg; $('toasts').appendChild(t); setTimeout(()=>t.remove(),3800); }
+function openModal(html, wide){ const m=$('modal'); m.className='modal card'+(wide?' wide':''); m.innerHTML=html; $('modalWrap').classList.add('on'); }
+function closeModal(){ $('modalWrap').classList.remove('on'); $('modal').innerHTML=''; }
+$('modalWrap').addEventListener('click', e=>{ if(e.target.id==='modalWrap') closeModal(); });
+function confirmModal(title, msg, onYes, danger){
+  openModal('<div class="mhead"><b>'+esc(title)+'</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody"><p style="color:var(--muted);line-height:1.6">'+esc(msg)+'</p><div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;flex-wrap:wrap"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn '+(danger?'err':'')+'" id="cfYes">Confirm</button></div></div>');
+  $('cfYes').onclick=()=>{ closeModal(); onYes(); };
+}
+function initials(n){ n=(n||'?').trim(); return (n[0]||'?').toUpperCase(); }
+function tgPw(id, btn){ const i=$(id); if(!i) return; const show=i.type==='password'; i.type=show?'text':'password'; btn.textContent=show?'🙈':'👁'; }
+function b64toBlob(b64, mime){ const bin=atob(b64), len=bin.length, arr=new Uint8Array(len); for(let i=0;i<len;i++) arr[i]=bin.charCodeAt(i); return new Blob([arr],{type:mime||'application/octet-stream'}); }
+function fileToB64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>{ const s=String(r.result); res(s.substring(s.indexOf(',')+1)); }; r.onerror=rej; r.readAsDataURL(file); }); }
+function pickFile(accept, cb){ const i=document.createElement('input'); i.type='file'; if(accept) i.accept=accept; i.onchange=()=>{ if(i.files&&i.files[0]) cb(i.files[0]); }; i.click(); }
+
+async function api(p, silent){
+  if(!silent) showLoader();
+  try{
+    const body = Object.assign({}, p);
+    if(SESSION && SESSION.token && !body.token) body.token = SESSION.token;
+    const r = await fetch(API, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(body) });
+    const t = await r.text();
+    let j; try{ j=JSON.parse(t); }catch(e){ return { ok:false, msg:'Server returned HTML. Check the deployment is set to "Anyone" and redeploy a New version.' }; }
+    if(j && j.error==='AUTH'){ localStorage.removeItem('aur_session'); SESSION=null; }
+    return j;
+  }catch(e){ return { ok:false, msg:'Connection failed: '+(e.message||e) }; }
+  finally{ if(!silent) hideLoader(); }
+}
+function saveSession(){ localStorage.setItem('aur_session', JSON.stringify(SESSION)); }
+
+/* ============ BOOT ============ */
+function getShareParam(){
+  const q = new URLSearchParams(location.search);
+  if(q.get('s')) return q.get('s');
+  const h = location.hash.match(/[#&]s=([A-Za-z0-9]+)/); if(h) return h[1];
+  return null;
+}
+async function boot(){
+  if(!apiOk(API)){ showApiBanner(true); }
+  const sid = getShareParam();
+  if(sid){ SHARE_ID=sid; $('authView').style.display='none'; renderShare(sid); return; }
+  const raw = localStorage.getItem('aur_session');
+  if(!raw){ showAuth(); return; }
+  try{ SESSION = JSON.parse(raw); }catch(e){ SESSION=null; }
+  if(!SESSION){ showAuth(); return; }
+  const r = await api({action:'whoami'}, true);
+  if(r.ok){ SESSION=r.session; saveSession(); showApp(); }
+  else { localStorage.removeItem('aur_session'); SESSION=null; showAuth(); }
+}
+function showApiBanner(bad){
+  const b=$('apiBanner');
+  if(bad){ b.className='banner bad on'; b.innerHTML='⚠️ Server URL not set. <a href="#" onclick="setApiUrl();return false">Set URL</a>'; }
+  else { b.className='banner good on'; b.textContent='✅ Connected'; setTimeout(()=>b.classList.remove('on'),2500); }
+}
+function setApiUrl(){
+  openModal('<div class="mhead"><b>Set server URL</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody"><label class="fld">Web app /exec URL</label><input class="inp" id="apiU" value="'+esc(API)+'"><button class="btn" style="margin-top:14px" onclick="saveApiUrl()">Save & reload</button></div>');
+}
+function saveApiUrl(){ const v=$('apiU').value.trim(); localStorage.setItem('aur_api',v); location.reload(); }
+
+/* ============ AUTH ============ */
+let authMode='login', authEmail='', authStep='form';
+function showAuth(){ $('authView').style.display='flex'; $('appView').classList.remove('ready'); $('shareView').style.display='none'; setAuthMode('login'); }
+function setAuthMode(m){ authMode=m; authStep='form'; $('tabLogin').classList.toggle('on',m==='login'); $('tabSignup').classList.toggle('on',m==='signup'); renderAuth(); }
+function renderAuth(){
+  const b=$('authBody');
+  if(authMode==='login' && authStep==='form'){
+    b.innerHTML =
+      '<h2 style="font-size:23px;margin-bottom:4px">Welcome back</h2>'+
+      '<p style="color:var(--muted);font-size:13.5px;margin-bottom:6px">Log in with your mobile number or email.</p>'+
+      '<label class="fld">Mobile or email</label><input class="inp" id="aId" placeholder="9876543210 or you@example.com">'+
+      '<label class="fld">Password</label><div class="pwwrap"><input class="inp" id="aPass" type="password" placeholder="••••••" onkeydown="if(event.key===\'Enter\')doLogin()"><button type="button" class="pweye" onclick="tgPw(\'aPass\',this)">👁</button></div>'+
+      '<button class="btn" style="width:100%;margin-top:20px" onclick="doLogin()">Log in ⚡</button>'+
+      '<div style="text-align:right;margin-top:14px;font-size:12.5px"><a href="#" onclick="authMode=\'forgot\';authStep=\'form\';renderAuth();return false">Forgot password?</a></div>';
+  } else if(authMode==='signup' && authStep==='form'){
+    b.innerHTML =
+      '<h2 style="font-size:23px;margin-bottom:4px">Create account</h2>'+
+      '<p style="color:var(--muted);font-size:13.5px;margin-bottom:6px">Access is granted after admin approval.</p>'+
+      '<label class="fld">Full name</label><input class="inp" id="sName" placeholder="Your name">'+
+      '<label class="fld">Email</label><input class="inp" id="sEmail" type="email" placeholder="you@example.com">'+
+      '<label class="fld">Mobile number</label><input class="inp" id="sMobile" inputmode="numeric" placeholder="9876543210">'+
+      '<label class="fld">Password</label><div class="pwwrap"><input class="inp" id="sPass" type="password" placeholder="Min 6 characters"><button type="button" class="pweye" onclick="tgPw(\'sPass\',this)">👁</button></div>'+
+      '<label class="fld">Confirm password</label><div class="pwwrap"><input class="inp" id="sPass2" type="password" placeholder="Repeat password" onkeydown="if(event.key===\'Enter\')doSignup()"><button type="button" class="pweye" onclick="tgPw(\'sPass2\',this)">👁</button></div>'+
+      '<button class="btn" style="width:100%;margin-top:20px" onclick="doSignup()">Sign up 🚀</button>';
+  } else if(authMode==='signup' && authStep==='otp'){
+    b.innerHTML =
+      '<h2 style="font-size:23px;margin-bottom:4px">Verify email</h2>'+
+      '<p style="color:var(--muted);font-size:13.5px;margin-bottom:6px">We sent a 6-digit code to <b>'+esc(authEmail)+'</b>.</p>'+
+      '<label class="fld">Code</label><input class="inp" id="aOtp" inputmode="numeric" maxlength="6" placeholder="••••••" style="letter-spacing:8px;font-size:22px;text-align:center" onkeydown="if(event.key===\'Enter\')doVerify()">'+
+      '<button class="btn" style="width:100%;margin-top:20px" onclick="doVerify()">Verify ✅</button>'+
+      '<div style="display:flex;justify-content:space-between;margin-top:14px;font-size:12.5px"><a href="#" onclick="authMode=\'signup\';authStep=\'form\';renderAuth();return false">← Back</a><a href="#" onclick="resendCode();return false">Resend code</a></div>';
+  } else if(authMode==='forgot' && authStep==='form'){
+    b.innerHTML =
+      '<h2 style="font-size:23px;margin-bottom:4px">Reset password</h2>'+
+      '<p style="color:var(--muted);font-size:13.5px;margin-bottom:6px">Enter your registered email — a code will be sent there.</p>'+
+      '<label class="fld">Email</label><input class="inp" id="fEmailI" type="email" placeholder="you@example.com" onkeydown="if(event.key===\'Enter\')doForgot()">'+
+      '<button class="btn" style="width:100%;margin-top:20px" onclick="doForgot()">Send code 📩</button>'+
+      '<div style="text-align:right;margin-top:14px;font-size:12.5px"><a href="#" onclick="setAuthMode(\'login\');return false">← Back to login</a></div>';
+  } else if(authMode==='forgot' && authStep==='reset'){
+    b.innerHTML =
+      '<h2 style="font-size:23px;margin-bottom:4px">Set new password</h2>'+
+      '<p style="color:var(--muted);font-size:13.5px;margin-bottom:6px">Code sent to <b>'+esc(authEmail)+'</b>.</p>'+
+      '<label class="fld">Code</label><input class="inp" id="aOtp" inputmode="numeric" maxlength="6" placeholder="••••••" style="letter-spacing:6px;text-align:center">'+
+      '<label class="fld">New password</label><div class="pwwrap"><input class="inp" id="rPass" type="password" placeholder="Min 6 characters" onkeydown="if(event.key===\'Enter\')doReset()"><button type="button" class="pweye" onclick="tgPw(\'rPass\',this)">👁</button></div>'+
+      '<button class="btn" style="width:100%;margin-top:20px" onclick="doReset()">Reset & log in 🔑</button>'+
+      '<div style="text-align:right;margin-top:14px;font-size:12.5px"><a href="#" onclick="resendCode();return false">Resend code</a></div>';
+  }
+}
+async function doLogin(){
+  const id=($('aId').value||'').trim(), pass=$('aPass').value||'';
+  if(!id||!pass){ toast('Enter your credentials','err'); return; }
+  const r=await api({action:'login', identifier:id, password:pass});
+  if(r.ok && r.session){ SESSION=r.session; saveSession(); toast('Welcome','ok'); showApp(); }
+  else toast(r.msg||'Login failed','err');
+}
+async function doSignup(){
+  const name=($('sName').value||'').trim(), email=($('sEmail').value||'').trim().toLowerCase(),
+    mobile=($('sMobile').value||'').trim(), pass=$('sPass').value||'', pass2=$('sPass2').value||'';
+  if(!name){ toast('Enter your name','err'); return; }
+  if(!email){ toast('Enter your email','err'); return; }
+  if(!mobile){ toast('Enter your mobile number','err'); return; }
+  if(pass.length<6){ toast('Password must be at least 6 characters','err'); return; }
+  if(pass!==pass2){ toast('Passwords do not match','err'); return; }
+  const r=await api({action:'signup', name, email, mobile, password:pass});
+  if(r.ok){ authEmail=email; authMode='signup'; authStep='otp'; renderAuth(); toast(r.msg||'Code sent','ok'); }
+  else toast(r.msg||'Failed','err');
+}
+async function doVerify(){
+  const otp=($('aOtp').value||'').trim();
+  if(otp.length<6){ toast('Enter the 6-digit code','err'); return; }
+  const r=await api({action:'verifyOtp', email:authEmail, otp});
+  if(!r.ok){ toast(r.msg||'Incorrect code','err'); return; }
+  if(r.status==='Active' && r.session){ SESSION=r.session; saveSession(); toast(r.msg||'Welcome','ok'); showApp(); }
+  else { toast('Email verified','ok'); openModal('<div class="mhead"><b>Almost there ⏳</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody"><p style="line-height:1.6;color:var(--muted)">'+esc(r.msg||'Awaiting admin approval. You can log in once approved.')+'</p><button class="btn" style="margin-top:16px" onclick="closeModal();setAuthMode(\'login\')">OK</button></div>'); }
+}
+async function doForgot(){
+  const email=($('fEmailI').value||'').trim().toLowerCase();
+  if(!email){ toast('Enter your email','err'); return; }
+  const r=await api({action:'forgotPassword', email});
+  authEmail=email; authStep='reset'; renderAuth(); toast(r.msg||'Code sent','ok');
+}
+async function doReset(){
+  const otp=($('aOtp').value||'').trim(), pass=$('rPass').value||'';
+  if(otp.length<6){ toast('Enter the code','err'); return; }
+  if(pass.length<6){ toast('Password must be at least 6 characters','err'); return; }
+  const r=await api({action:'resetPassword', email:authEmail, otp, password:pass});
+  if(!r.ok){ toast(r.msg||'Failed','err'); return; }
+  if(r.status==='Active' && r.session){ SESSION=r.session; saveSession(); toast('Password updated','ok'); showApp(); }
+  else { toast(r.msg||'Password updated','ok'); setAuthMode('login'); }
+}
+async function resendCode(){ const r=await api({action:'resendOtp', email:authEmail}); toast(r.msg||'Sent', r.ok?'ok':'err'); }
+
+/* ============ APP SHELL ============ */
+function toggleSide(){ $('appView').classList.toggle('side-open'); }
+function closeSide(){ $('appView').classList.remove('side-open'); }
+const NAV=[['library','🏠','Dashboard'],['shares','🔗','Shares'],['users','👥','Users'],['add','＋','Add Content']];
+function showApp(){
+  $('authView').style.display='none'; $('shareView').style.display='none'; $('appView').classList.add('ready');
+  const admin=SESSION.isAdmin;
+  $('nav').innerHTML = NAV.filter(n=>admin||['library','shares'].includes(n[0])).map((n,i)=>
+    '<button class="pill'+(i===0?' on':'')+'" data-pg="'+n[0]+'" onclick="go(\''+n[0]+'\')"><span class="ni">'+n[1]+'</span><span>'+n[2]+'</span></button>').join('');
+  $('uchip').innerHTML='<div class="ucard"><div class="uav">'+initials(SESSION.name)+'</div><div style="min-width:0"><div class="uname">'+esc(SESSION.name)+'</div><div class="urole">'+esc(SESSION.role)+'</div></div></div><button class="btn ghost sm" style="width:100%;margin-top:11px" onclick="signOut()">Sign out 👋</button>';
+  $('footer').textContent=BRAND+' · Secure sharing · v'+APP_VERSION;
+  go('library');
+}
+function signOut(){ localStorage.removeItem('aur_session'); SESSION=null; location.href=location.pathname; }
+function go(pg){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('on',p.dataset.pg===pg));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  $('pg-'+pg).classList.add('on');
+  closeSide();
+  if(pg==='library') loadLibrary();
+  if(pg==='shares') loadShares();
+  if(pg==='users') loadUsers();
+  if(pg==='add') renderAdd();
+}
+
+/* ============ DASHBOARD / LIBRARY ============ */
+const ICON={video:'🎬',pdf:'📄',note:'📝',folder:'📁'};
+function statTile(icon,n,l){ return '<div class="stat"><div class="si">'+icon+'</div><div class="snum">'+n+'</div><div class="slbl">'+l+'</div></div>'; }
+async function loadLibrary(){
+  if(ITEMS.length) renderLibrary();   // instant from cache, then refresh silently
+  else $('pg-library').innerHTML='<h2 class="pt">Dashboard</h2><p class="psub">Loading…</p>';
+  const r=await api({action:'listItems'}, true);
+  if(r.ok){ ITEMS=r.items||[]; renderLibrary(); }
+  else if(!ITEMS.length){ $('pg-library').innerHTML='<h2 class="pt">Dashboard</h2><p class="psub" style="color:var(--err)">'+esc(r.msg||'Failed')+'</p>'; }
+}
+let CUR_WEEK = null;   // null = all; number = week; 0 = unsorted
+function selectWeek(w){ CUR_WEEK = (w==='all') ? 'all' : Number(w); renderLibrary(); window.scrollTo({top:0,behavior:'smooth'}); }
+function ago(ts){
+  if(!ts) return ''; const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60) return 'just now';
+  const m=Math.floor(s/60); if(m<60) return m+'m ago';
+  const h=Math.floor(m/60); if(h<24) return h+'h ago';
+  const d=Math.floor(h/24); if(d<30) return d+'d ago';
+  const mo=Math.floor(d/30); return mo+'mo ago';
+}
+function wcard(val,icon,label,n,active){
+  return '<div class="wcard'+(active?' on':'')+'" onclick="selectWeek(\''+val+'\')"><div class="wic">'+icon+'</div><div class="wc-t">'+esc(label)+'</div><div class="wc-n">'+n+' item'+(n!==1?'s':'')+'</div></div>';
+}
+function recRow(it){
+  return '<div class="recrow" onclick="openItem(\''+it.id+'\')"><div class="rec-ic b-'+it.type+'">'+ICON[it.type]+'</div>'+
+    '<div class="rec-main"><div class="rec-t">'+esc(it.title)+'</div><div class="rec-m">'+(it.week>0?'Week '+it.week:'Unsorted')+' · '+esc(it.type)+'</div></div>'+
+    '<div class="rec-time">'+ago(it._ts)+'</div></div>';
+}
+let LIB_Q='';
+function renderLibrary(){
+  const vids=ITEMS.filter(i=>i.type==='video').length, docs=ITEMS.filter(i=>i.type==='pdf'||i.type==='note').length;
+  const totalViews=ITEMS.reduce((a,i)=>a+(i.views||0),0);
+  const weeks=[...new Set(ITEMS.map(i=>i.week||0))];
+  const nWeeks=weeks.filter(w=>w>0).length;
+  let html='<h2 class="pt">Dashboard</h2><p class="psub">Your private vault — search or browse by week.</p>'+
+    '<div class="stats">'+statTile('📦',ITEMS.length,'Total items')+statTile('🗓️',nWeeks,'Weeks')+statTile('🎬',vids,'Videos')+statTile('👁',totalViews,'Total views')+'</div>';
+  if(!ITEMS.length){
+    html+='<div class="card" style="padding:48px;text-align:center;color:var(--muted);margin-top:20px">Nothing here yet.'+(SESSION.isAdmin?' <a href="#" onclick="go(\'add\');return false">Add your first item →</a>':'')+'</div>';
+    $('pg-library').innerHTML=html; return;
+  }
+  // search bar
+  html+='<div class="searchbar"><span class="si2">🔍</span><input id="libSearch" class="inp" placeholder="Search by title, tag or week…" value="'+esc(LIB_Q)+'" oninput="doLibSearch(this.value)"><button class="searchx" id="libSearchX" onclick="clearLibSearch()" style="'+(LIB_Q?'':'display:none')+'">✕</button></div>';
+  html+='<div id="searchResults"'+(LIB_Q?'':' class="hide"')+'></div>';
+  html+='<div id="libBrowse"'+(LIB_Q?' class="hide"':'')+'>'+buildBrowse(weeks)+'</div>';
+  // recent uploads — always latest 5
+  const recent=ITEMS.slice().sort((a,b)=>(b._ts||0)-(a._ts||0)).slice(0,5);
+  html+='<div class="recent-sec"><div class="whead"><span class="wtitle">Recent uploads</span><span class="wpill">last 5</span><span class="wline"></span></div>'+
+    '<div class="card reclist">'+(recent.length?recent.map(recRow).join(''):'<div style="color:var(--muted);padding:16px">No uploads yet.</div>')+'</div></div>';
+  $('pg-library').innerHTML=html;
+  if(LIB_Q) renderSearch();
+}
+function buildBrowse(weeks){
+  const sortedWeeks=weeks.slice().sort((a,b)=>b-a);
+  let wsel='<div class="psub2">Browse by week</div><div class="wgrid">'+
+    wcard('all','🗂️','All items',ITEMS.length, CUR_WEEK==='all');
+  sortedWeeks.forEach(w=>{ const n=ITEMS.filter(i=>(i.week||0)===w).length; wsel+=wcard(w, w>0?'🗓️':'📂', w>0?('Week '+w):'Unsorted', n, CUR_WEEK===w); });
+  wsel+='</div>';
+  let html=wsel;
+  if(CUR_WEEK==='all'){
+    const sw=weeks.slice().sort((a,b)=>b-a); let idx=0;
+    sw.forEach(w=>{
+      const list=ITEMS.filter(i=>(i.week||0)===w), lab=w>0?('Week '+w):'Unsorted';
+      html+='<div class="wsec"><div class="whead"><span class="wtitle">'+lab+'</span><span class="wpill">'+list.length+' item'+(list.length!==1?'s':'')+'</span><span class="wline"></span></div>'+
+        '<div class="grid">'+list.map(it=>{ idx++; return itemCard(it,idx); }).join('')+'</div></div>';
+    });
+  } else if(CUR_WEEK!==null){
+    const shown = ITEMS.filter(i=>(i.week||0)===CUR_WEEK);
+    const title = CUR_WEEK>0?('Week '+CUR_WEEK):'Unsorted';
+    html+='<div class="whead" style="margin-top:14px"><span class="wtitle">'+esc(title)+'</span><span class="wpill">'+shown.length+' item'+(shown.length!==1?'s':'')+'</span><a href="#" onclick="selectWeek(\'all\');return false" style="font-size:12.5px">← all weeks</a><span class="wline"></span></div>'+
+      (shown.length ? '<div class="grid">'+shown.map((it,i)=>itemCard(it,i+1)).join('')+'</div>'
+                    : '<div class="card" style="padding:36px;text-align:center;color:var(--muted)">No items in '+esc(title)+'.</div>');
+  }
+  return html;
+}
+let _searchTmr=null;
+function doLibSearch(v){
+  LIB_Q=(v||'').trim().toLowerCase();
+  const x=$('libSearchX'); if(x) x.style.display=LIB_Q?'':'none';
+  clearTimeout(_searchTmr); _searchTmr=setTimeout(renderSearch,120);
+}
+function clearLibSearch(){ LIB_Q=''; const i=$('libSearch'); if(i){ i.value=''; i.focus(); } renderSearch(); }
+function renderSearch(){
+  const sr=$('searchResults'), br=$('libBrowse'); if(!sr||!br) return;
+  if(!LIB_Q){ sr.className='hide'; sr.innerHTML=''; br.className=''; return; }
+  br.className='hide'; sr.className='';
+  const q=LIB_Q, matches=ITEMS.filter(it=>
+    (it.title||'').toLowerCase().includes(q) ||
+    (it.tags||'').toLowerCase().includes(q) ||
+    (it.description||'').toLowerCase().includes(q) ||
+    ('week '+(it.week||0)).includes(q) || String(it.type).includes(q));
+  sr.innerHTML='<div class="whead"><span class="wtitle">Search results</span><span class="wpill">'+matches.length+' match'+(matches.length!==1?'es':'')+'</span><span class="wline"></span></div>'+
+    (matches.length ? '<div class="grid">'+matches.map((it,i)=>itemCard(it,i+1)).join('')+'</div>'
+                    : '<div class="card" style="padding:40px;text-align:center;color:var(--muted)">No items match "'+esc(LIB_Q)+'".</div>');
+}
+function itemCard(it,i){
+  const img = it.thumb ? '<img src="'+esc(it.thumb)+'" loading="lazy" onerror="this.remove()">' : '';
+  const play = it.type==='video' ? '<div class="playb">▶</div>' : '';
+  const wk = it.week>0 ? '<span class="badge b-mut">Week '+it.week+'</span>' : '<span class="badge b-mut">Unsorted</span>';
+  const views = (it.views>0) ? '<span class="vcount">👁 '+it.views+'</span>' : '';
+  const adminActs = SESSION.isAdmin
+    ? '<button class="iconbtn2" title="Edit" onclick="editItem(\''+it.id+'\')">✏</button><button class="iconbtn2 danger" title="Delete" onclick="delItem(\''+it.id+'\')">🗑</button>' : '';
+  return '<div class="icard" style="animation-delay:'+Math.min(i*35,320)+'ms">'+
+    '<div class="ithumb" style="cursor:pointer" onclick="openItem(\''+it.id+'\')"><div class="ph">'+ICON[it.type]+'</div>'+img+'<div class="tov"></div>'+play+
+      '<div class="tchips"><span class="badge b-'+it.type+'">'+it.type+'</span>'+wk+'</div>'+views+'</div>'+
+    '<div class="ibody">'+
+      '<div class="ititle">'+esc(it.title)+'</div>'+
+      (it.description?'<div class="idesc">'+esc(it.description)+'</div>':'')+
+      '<div class="iacts"><button class="btn sm" onclick="openItem(\''+it.id+'\')">Open</button>'+
+        '<button class="iconbtn2" title="Share link" onclick="shareItem(\''+it.id+'\')">🔗</button>'+adminActs+'</div>'+
+    '</div></div>';
+}
+
+/* ---- viewer ---- */
+function wmHTML(){
+  // faint repeating watermark of the viewer's identity — leak deterrence
+  const tag=esc((SESSION&&(SESSION.email||SESSION.name))||'');
+  if(!tag) return '';
+  return '<div class="wm" aria-hidden="true">'+Array(80).fill('<span>'+tag+' · AUREVIA</span>').join('')+'</div>';
+}
+async function openItem(id){
+  const it=ITEMS.find(x=>x.id===id); if(!it) return;
+  if(SESSION){ it.views=(it.views||0)+1; api({action:'bumpView', id:it.id}, true); }   // count + persist silently
+  openModal('<div class="mhead"><div><b>'+esc(it.title)+'</b> <span class="badge b-'+it.type+'">'+it.type+'</span></div><button class="x" onclick="closeModal()">×</button></div><div class="mbody" id="vBody"><p style="color:var(--muted)">Loading…</p></div>', true);
+  if(it.type==='video'){ renderVideo($('vBody'), it.drive_id, it.description); }
+  else if(it.type==='note'){ renderNote($('vBody'), it); }
+  else if(it.type==='folder'){ renderFolder($('vBody'), it); }
+  else {
+    const r=await api({action:'streamFile', id:it.id}, true);
+    if(r && r.ok) renderFileBlob($('vBody'), r, it.description);
+    else if(it.drive_id) renderDriveStream($('vBody'), it, (r&&r.msg)||'');   // big file → Drive streams it
+    else renderFileBlob($('vBody'), r, it.description);
+  }
+}
+function renderDriveStream(box, it, note){
+  const prev='https://drive.google.com/file/d/'+esc(it.drive_id)+'/preview';
+  const view='https://drive.google.com/file/d/'+esc(it.drive_id)+'/view';
+  box.innerHTML=(it.description?'<p style="color:var(--muted);margin-bottom:10px">'+esc(it.description)+'</p>':'')+
+    (note?'<p style="color:var(--warn);font-size:12px;margin-bottom:10px">'+esc(note)+' — streaming directly from Drive instead.</p>':'')+
+    '<div class="vwrap" oncontextmenu="return false">'+wmHTML()+'<iframe class="vframe" src="'+prev+'" allow="autoplay" allowfullscreen></iframe></div>'+
+    '<a class="btn ghost sm" style="margin-top:10px;text-decoration:none" href="'+view+'" target="_blank" rel="noopener">Open in Drive ↗</a>';
+}
+function renderVideo(box, driveId, desc){
+  box.innerHTML = (desc?'<p style="color:var(--muted);margin-bottom:12px">'+esc(desc)+'</p>':'')+
+    '<div class="vwrap" oncontextmenu="return false">'+wmHTML()+'<iframe class="vframe" src="https://drive.google.com/file/d/'+esc(driveId)+'/preview" allow="autoplay" allowfullscreen></iframe></div>'+
+    '<p style="color:var(--faint);font-size:11.5px;margin-top:8px">Streamed from Drive (link mode). Not a hard lock.</p>';
+}
+function renderNote(box, it){
+  box.innerHTML = it.body ? '<div class="notebody">'+esc(it.body)+'</div>'
+                          : '<p style="color:var(--muted)">(empty note)</p>';
+}
+function renderFileBlob(box, r, desc){
+  if(!r || !r.ok){ box.innerHTML='<p style="color:var(--err)">'+esc((r&&r.msg)||'Stream failed')+'</p>'; return; }
+  const blob=b64toBlob(r.b64, r.mime), url=URL.createObjectURL(blob);
+  const isPdf=(r.mime||'').indexOf('pdf')>=0, isImg=(r.mime||'').indexOf('image')>=0, isVid=(r.mime||'').indexOf('video')>=0;
+  let view;
+  if(isPdf) view='<iframe class="vframe" src="'+url+'"></iframe>';
+  else if(isImg) view='<img src="'+url+'" style="max-width:100%;border-radius:12px">';
+  else if(isVid) view='<video class="vframe" src="'+url+'" controls controlsList="nodownload" oncontextmenu="return false"></video>';
+  else view='<a class="btn" href="'+url+'" download="'+esc(r.name||'file')+'">⬇ Download '+esc(r.name||'')+'</a>';
+  const wm=(isImg||isVid||isPdf)?wmHTML():'';
+  box.innerHTML=(desc?'<p style="color:var(--muted);margin-bottom:12px">'+esc(desc)+'</p>':'')+'<div class="vwrap" oncontextmenu="return false">'+wm+view+'</div>';
+}
+async function renderFolder(box, it){
+  const r=await api({action:'getItem', id:it.id}, true);
+  const files=(r.ok && r.item && r.item.files)||[];
+  if(!files.length){ box.innerHTML='<p style="color:var(--muted)">Folder is empty or not accessible.</p>'; return; }
+  box.innerHTML='<div class="scrollx"><table class="tbl"><thead><tr><th>File</th><th>Type</th><th></th></tr></thead><tbody>'+
+    files.map(f=>'<tr><td>'+esc(f.name)+'</td><td><span class="badge b-mut">'+f.ftype+'</span></td><td><button class="btn sm" onclick="openChild(\''+it.id+'\',\''+f.drive_id+'\',\''+f.ftype+'\',this)">Open</button></td></tr>').join('')+
+    '</tbody></table></div><div id="childView" style="margin-top:16px"></div>';
+}
+async function openChild(itemId, driveId, ftype, btn){
+  btn.textContent='…';
+  const r=await api({action:'streamChild', item_id:itemId, drive_id:driveId}, true);
+  btn.textContent='Open';
+  renderFileBlob($('childView'), r, '');
+  $('childView').scrollIntoView({behavior:'smooth'});
+}
+
+/* ---- add / edit item (admin) ---- */
+function renderAdd(){
+  $('pg-add').innerHTML =
+    '<h2 class="pt">Add content</h2><p class="psub">Add a video, PDF, note or folder — paste a Drive link or upload from your device.</p>'+
+    '<div class="card" style="padding:24px;max-width:640px">'+
+    '<div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:2;min-width:160px"><label class="fld">Type</label><select id="fType" onchange="addTypeChange()"><option value="video">🎬 Video (link mode)</option><option value="pdf">📄 PDF (secure proxy)</option><option value="note">📝 Note</option><option value="folder">📁 Folder</option></select></div><div style="flex:1;min-width:110px"><label class="fld">Week</label><input class="inp" id="fWeek" type="number" min="0" value="1" placeholder="1"></div></div>'+
+    '<div id="fDriveWrap"><label class="fld">Drive link / ID</label><div class="uprow"><input class="inp" id="fDrive" placeholder="Paste a Drive link or upload →"><button class="btn ghost sm" id="fUpBtn" onclick="uploadContent(this)">⬆ Upload file</button></div></div>'+
+    '<div id="fBodyWrap" class="hide"><label class="fld">Note text</label><textarea id="fBody" rows="6" placeholder="Write here…"></textarea></div>'+
+    '<label class="fld">Title</label><input class="inp" id="fTitle" placeholder="Required">'+
+    '<label class="fld">Short description (optional)</label><input class="inp" id="fDesc">'+
+    '<label class="fld">Thumbnail (optional)</label><div class="uprow"><input class="inp" id="fThumb" placeholder="Paste an image URL or upload →"><button class="btn ghost sm" onclick="uploadThumbPick(this,\'fThumb\',\'fThumbPrev\')">⬆ Upload image</button></div><img id="fThumbPrev" class="thumbprev" alt="">'+
+    '<label class="fld">Tags (optional, comma-separated)</label><input class="inp" id="fTags">'+
+    '<button class="btn" style="margin-top:20px;width:100%" onclick="addItem()">Add to library 🚀</button>'+
+    '<p style="color:var(--faint);font-size:11.5px;margin-top:14px">Videos use Drive\'s native player (any size, up to 10–12GB). PDFs &amp; notes are app-streamed and private up to 40MB; larger files open straight from Drive, so add them as Video or share the Drive file "anyone with link".</p>'+
+    '</div>';
+}
+function addTypeChange(){
+  const t=$('fType').value;
+  $('fBodyWrap').classList.toggle('hide', t!=='note');
+  const lbl=$('fDriveWrap').querySelector('label');
+  lbl.textContent = t==='folder' ? 'Drive folder link / ID' : (t==='note' ? 'Drive link / ID (optional — or write text below)' : 'Drive link / ID');
+  const up=$('fUpBtn');
+  up.style.display = (t==='folder') ? 'none' : '';   // folders come from Drive, not upload
+  up.textContent = t==='video' ? '⬆ Upload video' : '⬆ Upload file';
+}
+async function uploadContent(btn){
+  const type=$('fType').value;
+  if(type==='folder'){ toast('Folders are added by a Drive link','err'); return; }
+  pickFile(type==='video'?'video/*':(type==='pdf'?'application/pdf':''), async(file)=>{
+    const label=btn.textContent;
+    if(type==='video'){
+      // direct resumable upload to the owner Drive — any size, no 40MB cap
+      btn.disabled=true;
+      try{
+        const id=await uploadVideoResumable(file, pct=>{ btn.textContent='Uploading '+pct+'%'; });
+        $('fDrive').value=id; if(!$('fTitle').value) $('fTitle').value=file.name.replace(/\.[^.]+$/,'');
+        toast('Uploaded ✅ '+esc(file.name),'ok'); btn.textContent='✓ Uploaded';
+      }catch(e){ toast('Upload failed: '+(e.message||e),'err'); btn.textContent=label; }
+      btn.disabled=false; return;
+    }
+    // pdf -> base64 via app (stays private, ≤40MB)
+    if(file.size>40*1024*1024){ toast('Too large for a private PDF (max 40MB). Add big files as Video.','err'); return; }
+    btn.textContent='Uploading…'; btn.disabled=true;
+    try{
+      const b64=await fileToB64(file);
+      const r=await api({action:'uploadFile', b64, mime:file.type, name:file.name, type});
+      if(r.ok){ $('fDrive').value=r.drive_id; toast('Uploaded ✅','ok'); } else toast(r.msg||'Upload failed','err');
+    }catch(e){ toast('Upload failed','err'); }
+    btn.disabled=false; btn.textContent=label;
+  });
+}
+// Resumable: browser -> Google Drive directly (owner's Drive), chunked, unlimited size.
+async function uploadVideoResumable(file, onProgress){
+  const t=await api({action:'getUploadToken'}, true);
+  if(!t.ok || !t.token) throw new Error(t.msg||'No upload token');
+  const init=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id', {
+    method:'POST',
+    headers:{ 'Authorization':'Bearer '+t.token, 'Content-Type':'application/json; charset=UTF-8', 'X-Upload-Content-Type':(file.type||'video/mp4') },
+    body:JSON.stringify({ name:file.name, parents:[t.folder_id] })
+  });
+  if(!init.ok) throw new Error('Could not start upload ('+init.status+')');
+  const session=init.headers.get('Location'); if(!session) throw new Error('No upload session');
+  const CH=16*1024*1024; let pos=0, id=null;
+  while(pos<file.size){
+    const end=Math.min(pos+CH, file.size);
+    const res=await fetch(session, { method:'PUT', headers:{ 'Content-Range':'bytes '+pos+'-'+(end-1)+'/'+file.size }, body:file.slice(pos,end) });
+    if(res.status===308){ /* chunk accepted, keep going */ }
+    else if(res.ok){ const j=await res.json().catch(()=>null); if(j&&j.id) id=j.id; }
+    else throw new Error('chunk '+res.status);
+    pos=end; if(onProgress) onProgress(Math.round(pos/file.size*100));
+  }
+  if(!id) throw new Error('upload incomplete');
+  await api({action:'finalizeUpload', drive_id:id, type:'video'}, true);
+  return id;
+}
+async function uploadThumbPick(btn, targetId, prevId){
+  pickFile('image/*', async(file)=>{
+    if(file.size>10*1024*1024){ toast('Image too large (max 10MB)','err'); return; }
+    const label=btn.textContent; btn.textContent='Uploading…'; btn.disabled=true;
+    try{
+      const b64=await fileToB64(file);
+      const r=await api({action:'uploadThumb', b64, mime:file.type});
+      if(r.ok){ $(targetId).value=r.url; if(prevId){ const pv=$(prevId); if(pv){ pv.src=r.url; pv.style.display='block'; } } toast('Thumbnail set ✅','ok'); }
+      else toast(r.msg||'Upload failed','err');
+    }catch(e){ toast('Upload failed','err'); }
+    btn.disabled=false; btn.textContent=label;
+  });
+}
+async function addItem(){
+  const type=$('fType').value, title=$('fTitle').value.trim();
+  if(!title){ toast('Enter a title','err'); return; }
+  const payload={action:'addItem', type, title, week:$('fWeek').value, drive:$('fDrive').value.trim(),
+    description:$('fDesc').value.trim(), thumb:$('fThumb').value.trim(), tags:$('fTags').value.trim(),
+    body:(type==='note'?$('fBody').value:'')};
+  const r=await api(payload);
+  if(r.ok){
+    toast('Added ✅','ok'); if(r.warn) toast(r.warn,'err');
+    document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('on',p.dataset.pg==='library'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+    $('pg-library').classList.add('on');
+    await loadLibrary();
+    postCreate(r.id);
+  } else toast(r.msg||'Failed','err');
+}
+function postCreate(id){
+  const it=ITEMS.find(x=>x.id===id), title=it?esc(it.title):esc(id);
+  openModal('<div class="mhead"><b>Item added ✅</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody"><p style="color:var(--muted);line-height:1.6">"'+title+'" is live in your library. Edit the details or remove it anytime.</p><div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn" style="flex:1;min-width:120px" onclick="closeModal();editItem(\''+id+'\')">✏ Edit</button><button class="btn err ghost" onclick="closeModal();delItem(\''+id+'\')">🗑 Delete</button><button class="btn ghost" onclick="closeModal()">Done</button></div></div>');
+}
+function editItem(id){
+  const it=ITEMS.find(x=>x.id===id); if(!it) return;
+  const curThumb = it.thumb && it.thumb.indexOf("drive.google.com/thumbnail")<0 ? it.thumb : '';
+  openModal('<div class="mhead"><b>Edit item</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody">'+
+    '<label class="fld">Title</label><input class="inp" id="eTitle" value="'+esc(it.title)+'">'+
+    '<label class="fld">Week</label><input class="inp" id="eWeek" type="number" min="0" value="'+(it.week||0)+'">'+
+    '<label class="fld">Description</label><input class="inp" id="eDesc" value="'+esc(it.description||'')+'">'+
+    '<label class="fld">Thumbnail</label><div class="uprow"><input class="inp" id="eThumb" value="'+esc(curThumb)+'" placeholder="Image URL or upload →"><button class="btn ghost sm" onclick="uploadThumbPick(this,\'eThumb\',\'eThumbPrev\')">⬆ Upload</button></div><img id="eThumbPrev" class="thumbprev" alt="">'+
+    (it.type==='note'?'<label class="fld">Note text</label><textarea id="eBody" rows="5">'+esc(it.body||'')+'</textarea>':'')+
+    '<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn" style="flex:1;min-width:120px" onclick="saveEdit(\''+id+'\','+(it.type==='note')+')">Save 💾</button><button class="btn err ghost" onclick="delItem(\''+id+'\')">Delete</button></div></div>');
+}
+async function saveEdit(id, isNote){
+  const p={action:'updateItem', id, title:$('eTitle').value.trim(), week:$('eWeek').value, description:$('eDesc').value.trim(), thumb:$('eThumb').value.trim()};
+  if(isNote) p.body=$('eBody').value;
+  const r=await api(p);
+  if(r.ok){ toast('Saved ✅','ok'); closeModal(); loadLibrary(); } else toast(r.msg||'Failed','err');
+}
+function delItem(id){ confirmModal('Delete item?','It is removed from the library. The original Drive file stays safe.', async()=>{ const r=await api({action:'deleteItem', id}); if(r.ok){ toast('Deleted','ok'); closeModal(); loadLibrary(); } else toast(r.msg||'Failed','err'); }, true); }
+
+/* ============ SHARE (create + manage) ============ */
+function shareItem(id){
+  const it=ITEMS.find(x=>x.id===id); if(!it) return;
+  openModal('<div class="mhead"><b>🔗 Share "'+esc(it.title)+'"</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody">'+
+    '<p style="color:var(--muted);font-size:13px">The countdown starts the first time the link is opened. When time runs out, the viewer must log in.</p>'+
+    '<label class="fld">Access duration</label><select id="shMins" onchange="document.getElementById(\'shCustom\').classList.toggle(\'hide\',this.value!==\'custom\')"><option value="30">30 minutes</option><option value="60">1 hour</option><option value="120" selected>2 hours</option><option value="360">6 hours</option><option value="1440">1 day</option><option value="10080">7 days</option><option value="custom">Custom…</option></select>'+
+    '<div id="shCustom" class="hide uprow" style="margin-top:8px"><input class="inp" id="shCustVal" type="number" min="1" value="3" style="flex:1"><select id="shCustUnit" style="flex:1"><option value="1">minutes</option><option value="60" selected>hours</option><option value="1440">days</option></select></div>'+
+    '<label class="fld">Label (optional)</label><input class="inp" id="shLabel" placeholder="'+esc(it.title)+'">'+
+    '<button class="btn" style="margin-top:16px;width:100%" onclick="makeShare(\''+id+'\')">Generate link</button>'+
+    '<div id="shOut" style="margin-top:16px"></div></div>');
+}
+async function makeShare(id){
+  let mins=$('shMins').value;
+  if(mins==='custom'){
+    const v=parseInt($('shCustVal').value,10)||0, u=parseInt($('shCustUnit').value,10)||1;
+    mins=v*u;
+    if(mins<5){ toast('Minimum 5 minutes','err'); return; }
+  }
+  const label=$('shLabel').value.trim();
+  const r=await api({action:'createShare', item_id:id, duration_mins:mins, label});
+  if(!r.ok){ toast(r.msg||'Failed','err'); return; }
+  const link=location.origin+location.pathname+'?s='+r.share_id;
+  $('shOut').innerHTML='<label class="fld">Share link ('+r.duration_mins+' min)</label><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="inp" id="shLink" readonly value="'+esc(link)+'" style="flex:1;min-width:180px"><button class="btn sm" onclick="copyLink()">Copy</button></div>';
+}
+function copyLink(){ const i=$('shLink'); i.select(); navigator.clipboard.writeText(i.value).then(()=>toast('Copied ✅','ok'),()=>{ document.execCommand('copy'); toast('Copied','ok'); }); }
+
+async function loadShares(){
+  $('pg-shares').innerHTML='<h2 class="pt">Shares</h2><p class="psub">Loading…</p>';
+  const r=await api({action:'listShares'}, true);
+  if(!r.ok){ $('pg-shares').innerHTML='<h2 class="pt">Shares</h2><p class="psub" style="color:var(--err)">'+esc(r.msg||'Failed')+'</p>'; return; }
+  const sh=r.shares||[];
+  const rows = sh.length ? sh.map(s=>{
+    const st=s.status, cls=st==='active'?'b-ok':(st==='expired'?'b-mut':(st==='revoked'?'b-err':'b-warn'));
+    const live = (st==='active' && s.expires_ts) ? '<span class="cdnum" style="font-size:14px" data-exp="'+s.expires_ts+'">…</span>' : esc(s.status);
+    return '<tr><td>'+esc(s.label||s.item)+'<div style="font-size:11px;color:var(--muted)">'+esc(s.item)+' · '+s.duration_mins+'min · '+s.opens+' opens</div></td>'+
+      '<td><span class="badge b-mut">'+esc(s.type||'')+'</span></td>'+
+      '<td><span class="badge '+cls+'">'+st+'</span><div style="font-size:11px;margin-top:3px">'+live+'</div></td>'+
+      '<td style="white-space:nowrap"><button class="btn ghost sm" title="Copy link" onclick="copyShare(\''+s.share_id+'\')">🔗<span class="blab"> Copy</span></button> '+
+      (st!=='revoked'?'<button class="btn err sm" title="Revoke" onclick="revokeShare(\''+s.share_id+'\')">🚫<span class="blab"> Revoke</span></button>':'')+'</td></tr>';
+  }).join('') : '<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:28px">No share links yet. Use 🔗 on any item.</td></tr>';
+  $('pg-shares').innerHTML='<h2 class="pt">Shares</h2><p class="psub">Time-bound links — the countdown starts on first open.</p><div class="card scrollx" style="padding:8px 14px"><table class="tbl"><thead><tr><th>Resource</th><th>Type</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  tickShareCountdowns();
+}
+function tickShareCountdowns(){
+  clearInterval(window._shTimer);
+  function upd(){
+    document.querySelectorAll('#pg-shares [data-exp]').forEach(el=>{
+      const left=new Date(el.dataset.exp).getTime()-Date.now();
+      if(left<=0){ el.textContent='expired'; return; }
+      const m=Math.floor(left/60000), s=Math.floor(left%60000/1000);
+      el.textContent=Math.floor(m/60)+'h '+(m%60)+'m '+s+'s';
+    });
+  }
+  upd(); window._shTimer=setInterval(upd,1000);
+}
+function copyShare(sid){ const link=location.origin+location.pathname+'?s='+sid; navigator.clipboard.writeText(link).then(()=>toast('Link copied ✅','ok')); }
+function revokeShare(sid){ confirmModal('Revoke link?','This link will stop working immediately.', async()=>{ const r=await api({action:'revokeShare', share_id:sid}); if(r.ok){ toast('Revoked','ok'); loadShares(); } else toast(r.msg||'Failed','err'); }, true); }
+
+/* ============ USERS (admin) ============ */
+async function loadUsers(){
+  $('pg-users').innerHTML='<h2 class="pt">Users</h2><p class="psub">Loading…</p>';
+  const r=await api({action:'listUsers'}, true);
+  if(!r.ok){ $('pg-users').innerHTML='<h2 class="pt">Users</h2><p class="psub" style="color:var(--err)">'+esc(r.msg||'Failed')+'</p>'; return; }
+  const us=r.users||[];
+  const pend=us.filter(u=>u.status==='Pending');
+  const others=us.filter(u=>u.status!=='Pending');
+  let pendHtml = pend.length ? '<div class="card" style="padding:18px;margin-bottom:18px"><b>⏳ Pending approval ('+pend.length+')</b>'+
+    pend.map(u=>'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line)"><div style="flex:1;min-width:160px"><b>'+esc(u.name)+'</b><div style="font-size:12px;color:var(--muted)">'+esc(u.email)+(u.mobile?' · 📱'+esc(u.mobile):'')+'</div></div>'+
+      '<select id="role_'+esc(u.email)+'" class="inp" style="width:auto;min-width:130px"><option>Member</option><option>Admin</option>'+(SESSION.role==='Super Admin'?'<option>Super Admin</option>':'')+'</select>'+
+      '<button class="btn sm" title="Approve" onclick="approveUser(\''+esc(u.email)+'\')">✅<span class="blab"> Approve</span></button>'+
+      '<button class="btn err ghost sm" title="Reject" onclick="rejectUser(\''+esc(u.email)+'\')">✖<span class="blab"> Reject</span></button></div>').join('')+'</div>' : '';
+  const rows=others.map(u=>{
+    const sc=u.status==='Active'?'b-ok':(u.status==='Rejected'?'b-err':(u.status==='Suspended'?'b-warn':'b-mut'));
+    const canMod = u.role!=='Super Admin' || SESSION.role==='Super Admin';
+    return '<tr><td><b>'+esc(u.name)+'</b><div style="font-size:11px;color:var(--muted)">'+esc(u.email)+(u.mobile?' · 📱'+esc(u.mobile):'')+'</div></td>'+
+      '<td><span class="badge b-mut">'+esc(u.role)+'</span></td>'+
+      '<td><span class="badge '+sc+'">'+esc(u.status)+'</span></td>'+
+      '<td style="font-size:12px;color:var(--muted)">'+esc(u.approved_by||'—')+(u.approved_ts?'<br>'+esc(u.approved_ts):'')+'</td>'+
+      '<td style="white-space:nowrap">'+(canMod&&u.status==='Active'?
+        '<button class="btn ghost sm" title="Change role" onclick="changeRole(\''+esc(u.email)+'\',\''+esc(u.role)+'\')">⚙<span class="blab"> Role</span></button> <button class="btn err ghost sm" title="Suspend" onclick="suspendUser(\''+esc(u.email)+'\',true)">⛔<span class="blab"> Suspend</span></button>'
+        :(u.status==='Suspended'?'<button class="btn sm" title="Reactivate" onclick="suspendUser(\''+esc(u.email)+'\',false)">↩<span class="blab"> Reactivate</span></button>':'—'))+'</td></tr>';
+  }).join('');
+  $('pg-users').innerHTML='<h2 class="pt">Users</h2><p class="psub">Approve, assign roles — the approver is shown for everyone.</p>'+pendHtml+
+    '<div class="card scrollx" style="padding:8px 14px"><table class="tbl"><thead><tr><th>User</th><th>Role</th><th>Status</th><th>Approved by</th><th></th></tr></thead><tbody>'+(rows||'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">—</td></tr>')+'</tbody></table></div>';
+}
+async function approveUser(email){ const role=$('role_'+email).value; const r=await api({action:'approveUser', email, role}); if(r.ok){ toast(r.msg||'Approved','ok'); loadUsers(); } else toast(r.msg||'Failed','err'); }
+function rejectUser(email){ confirmModal('Reject user?','Their access will be blocked.', async()=>{ const r=await api({action:'rejectUser', email}); if(r.ok){ toast('Rejected','ok'); loadUsers(); } else toast(r.msg||'Failed','err'); }, true); }
+function suspendUser(email, on){ confirmModal((on?'Suspend':'Reactivate')+' user?', email, async()=>{ const r=await api({action:'suspendUser', email, suspend:on}); if(r.ok){ toast(r.msg||'Done','ok'); loadUsers(); } else toast(r.msg||'Failed','err'); }, on); }
+function changeRole(email, cur){
+  openModal('<div class="mhead"><b>Change role</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody"><p style="color:var(--muted)">'+esc(email)+'</p><label class="fld">Role</label><select id="crRole" class="inp"><option'+(cur==='Member'?' selected':'')+'>Member</option><option'+(cur==='Admin'?' selected':'')+'>Admin</option>'+(SESSION.role==='Super Admin'?'<option'+(cur==='Super Admin'?' selected':'')+'>Super Admin</option>':'')+'</select><button class="btn" style="margin-top:16px" onclick="saveRole(\''+esc(email)+'\')">Save</button></div>');
+}
+async function saveRole(email){ const role=$('crRole').value; const r=await api({action:'setRole', email, role}); if(r.ok){ toast(r.msg||'Done','ok'); closeModal(); loadUsers(); } else toast(r.msg||'Failed','err'); }
+
+/* ============ SHARE LANDING (public recipient) ============ */
+async function renderShare(sid){
+  const v=$('shareView'); v.style.display='block';
+  v.innerHTML='<div class="sbig card" style="padding:44px;text-align:center"><div class="spin" style="margin:auto"></div><p style="margin-top:14px;color:var(--muted)">Opening…</p></div>';
+  const r=await api({action:'openShare', share_id:sid}, true);
+  if(!r.ok){ shareDenied(r.msg||'Invalid link', '🚫'); return; }
+  if(r.expired){ shareExpired(r.label); return; }
+  const res=r.resource;
+  const head='<div class="sbar"><div class="wordmark" style="font-size:20px"><span class="dot">Au</span> Aurevia</div><div style="color:var(--muted);font-size:13px">'+esc(r.label||'')+'</div><div style="flex:1"></div><div class="cdbox">⏳ <span class="cdnum" id="cdNum">…</span></div></div>';
+  v.innerHTML=head+'<div class="sbig card" style="padding:24px" id="sRes"><p style="color:var(--muted)">Loading…</p></div>';
+  startCountdown(r.expires_ts,'cdNum', ()=>renderShare(sid));
+  const box=$('sRes');
+  if(res.kind==='video'){ renderVideo(box, res.drive_id, res.description); }
+  else if(res.kind==='note'){ box.innerHTML='<h3 style="margin-bottom:10px">'+esc(res.title)+'</h3><div class="notebody">'+esc(res.body||'')+'</div>'; }
+  else if(res.kind==='file'){ shareFile(sid, res, box); }
+  else if(res.kind==='folder'){ shareFolder(sid, res, box); }
+  else box.innerHTML='<p style="color:var(--err)">Unknown resource.</p>';
+}
+async function shareFile(sid, res, box){
+  box.innerHTML='<h3 style="margin-bottom:12px">'+esc(res.title)+'</h3>'+(res.description?'<p style="color:var(--muted);margin-bottom:12px">'+esc(res.description)+'</p>':'')+'<div id="sfBody"><p style="color:var(--muted)">Loading…</p></div>';
+  const r=await api({action:'openShareSelf', share_id:sid}, true);
+  if(r && r.expired){ renderShare(sid); return; }
+  renderFileBlob($('sfBody'), r, '');
+}
+async function shareFolder(sid, res, box){
+  const files=res.files||[];
+  box.innerHTML='<h3 style="margin-bottom:6px">'+esc(res.title)+'</h3>'+(res.description?'<p style="color:var(--muted);margin-bottom:12px">'+esc(res.description)+'</p>':'')+
+    (files.length?'<div class="scrollx"><table class="tbl"><thead><tr><th>File</th><th>Type</th><th></th></tr></thead><tbody>'+
+    files.map(f=>'<tr><td>'+esc(f.name)+'</td><td><span class="badge b-mut">'+f.ftype+'</span></td><td><button class="btn sm" onclick="shareChild(\''+sid+'\',\''+f.drive_id+'\',this)">Open</button></td></tr>').join('')+
+    '</tbody></table></div><div id="sChild" style="margin-top:16px"></div>':'<p style="color:var(--muted)">Folder is empty.</p>');
+}
+async function shareChild(sid, driveId, btn){
+  btn.textContent='…';
+  const r=await api({action:'openShareFile', share_id:sid, drive_id:driveId}, true);
+  btn.textContent='Open';
+  if(r.expired){ renderShare(sid); return; }
+  renderFileBlob($('sChild'), r, '');
+  $('sChild').scrollIntoView({behavior:'smooth'});
+}
+function shareExpired(label){
+  $('shareView').innerHTML='<div class="sbig"><div class="denied card"><div class="em">⏳</div><h2 style="margin:10px 0">Time is up</h2><p style="color:var(--muted);margin-bottom:18px">The access window for "'+esc(label||'this link')+'" has closed. Log in to continue.</p><div id="xLogin"></div></div></div>';
+  renderShareLogin();
+}
+function renderShareLogin(){
+  const box=$('xLogin'); if(!box) return;
+  box.innerHTML='<label class="fld" style="text-align:left">Mobile or email</label><input class="inp" id="sId" placeholder="9876543210 or you@example.com"><label class="fld" style="text-align:left">Password</label><div class="pwwrap"><input class="inp" id="sPw" type="password" placeholder="••••••" onkeydown="if(event.key===\'Enter\')shareLogin()"><button type="button" class="pweye" onclick="tgPw(\'sPw\',this)">👁</button></div><button class="btn" style="width:100%;margin-top:14px" onclick="shareLogin()">Log in & continue ⚡</button>';
+}
+async function shareLogin(){
+  const id=($('sId').value||'').trim(), pw=$('sPw').value||'';
+  if(!id||!pw){ toast('Enter your credentials','err'); return; }
+  const r=await api({action:'login', identifier:id, password:pw});
+  if(r.ok && r.session){ SESSION=r.session; saveSession(); toast('Logged in ✅','ok'); location.href=location.pathname; }
+  else if(r.code==='NOUSER'){ shareDenied('No account found for these details. Access denied.', '🚫'); }
+  else if(r.code==='PENDING'){ shareDenied('This account is awaiting approval.', '⏳'); }
+  else toast(r.msg||'Login failed','err');
+}
+function shareDenied(msg, em){
+  $('shareView').innerHTML='<div class="sbig"><div class="denied card"><div class="em">'+(em||'🚫')+'</div><h2 style="margin:10px 0">Access Denied</h2><p style="color:var(--muted)">'+esc(msg)+'</p><a class="btn" style="display:inline-flex;margin-top:18px;text-decoration:none" href="'+location.pathname+'">Go to login →</a></div></div>';
+}
+function startCountdown(expiresIso, elId, onExpire){
+  clearInterval(CD_TIMER);
+  function tick(){
+    const left=new Date(expiresIso).getTime()-Date.now(), el=$(elId);
+    if(left<=0){ clearInterval(CD_TIMER); if(onExpire) onExpire(); return; }
+    const h=Math.floor(left/3600000), m=Math.floor(left%3600000/60000), s=Math.floor(left%60000/1000);
+    if(el) el.textContent=(h?h+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  }
+  tick(); CD_TIMER=setInterval(tick,1000);
+}
+
+/* ============ ASSISTANT ============ */
+let BOT_LOADED=false;
+function toggleBot(){ const p=$('botPanel'); p.classList.toggle('on'); if(p.classList.contains('on') && !BOT_LOADED) initBot(); }
+async function initBot(){
+  BOT_LOADED=true;
+  botMsg('bot', 'Hi '+(SESSION?SESSION.name.split(' ')[0]:'there')+'! I can help with the library, shares and users. '+(SESSION&&SESSION.isAdmin?'If I don\'t know something, teach me. 🧠':'Ask away.'));
+  $('bchips').innerHTML=['how many videos','active shares','pending users','how to share'].map(c=>'<span class="bchip" onclick="botQuick(\''+c+'\')">'+c+'</span>').join('');
+  const r=await api({action:'botBrain'}, true);
+  if(r.ok){ BOT_BRAIN=r; }
+}
+function botMsg(who, text){ const d=document.createElement('div'); d.className='bm '+who; d.innerHTML=esc(text).replace(/\n/g,'<br>'); $('bmsgs').appendChild(d); $('bmsgs').scrollTop=$('bmsgs').scrollHeight; }
+function botQuick(t){ $('binp').value=t; botSend(); }
+function botSend(){
+  const t=($('binp').value||'').trim(); if(!t) return; $('binp').value='';
+  botMsg('me', t); const a=botAnswer(t.toLowerCase());
+  setTimeout(()=>botReply(t, a), 200);
+}
+function botAnswer(q){
+  const st=BOT_BRAIN.stats||{};
+  if(/^(hi|hey|hello|yo)\b/.test(q)) return 'Hey! What do you need?';
+  if(/thank|thanks|thx/.test(q)) return 'Anytime 😎';
+  if(/how many|video|item|pdf|week/.test(q)) return 'The library has '+(st.items||0)+' items across '+(st.weeks||0)+' weeks — '+(st.videos||0)+' videos and '+(st.pdfs||0)+' PDFs.';
+  if(/active share|share.*(active|count)|how many share|link/.test(q)) return (st.active_shares||0)+' share links are currently active.';
+  if(/pending|approval|approve/.test(q)) return (st.pending_users||0)+' users are awaiting approval'+((st.pending_users&&st.isAdmin)?' — approve them in the Users tab.':'.');
+  if(/how.*share|share.*how|time.?bound/.test(q)) return 'In the Dashboard, tap 🔗 on an item, pick a duration and copy the link. The countdown starts on the first open; when it ends, the viewer must log in.';
+  if(/how.*add|add.*how|upload/.test(q)) return 'Open Add Content (admin), choose a type, paste a Drive link or upload from your device, add a title and thumbnail.';
+  if(/help|what can you/.test(q)) return 'I can tell you item counts, active shares, pending users, and how to share or add. Try "how to share".';
+  const taught=BOT_BRAIN.taught||[];
+  let best=null, bestScore=0;
+  taught.forEach(t=>{ const words=t.q.toLowerCase().split(/\s+/); let s=0; words.forEach(w=>{ if(w.length>2 && q.indexOf(w)>=0) s++; }); if(s>bestScore){ bestScore=s; best=t; } });
+  if(best && bestScore>=1) return best.a;
+  return null;
+}
+async function botReply(origQ, ans){
+  if(ans){ botMsg('bot', ans); return; }
+  if(SESSION && SESSION.isAdmin){
+    botMsg('bot', 'I don\'t know that yet. Teach me:');
+    const d=document.createElement('div'); d.className='bm bot';
+    d.innerHTML='<input class="inp" id="teachA" placeholder="Type the answer…" style="margin-bottom:6px"><button class="btn sm" onclick="botTeach(\''+esc(origQ).replace(/'/g,"\\'")+'\')">Teach 🧠</button>';
+    $('bmsgs').appendChild(d); $('bmsgs').scrollTop=$('bmsgs').scrollHeight;
+  } else {
+    botMsg('bot', 'Let me get a human on this…');
+    const r=await api({action:'botUnknown', q:origQ}, true);
+    const owner=(r&&r.owner)||'Somnath';
+    if(r&&r.mailed) botMsg('bot', 'I\'ve emailed '+owner+' your question. He\'ll contact you as soon as possible. 📩');
+    else botMsg('bot', 'I\'ve noted your question — '+owner+' will get back to you soon.');
+  }
+}
+async function botTeach(q){
+  const a=($('teachA').value||'').trim(); if(!a){ toast('Type the answer','err'); return; }
+  const r=await api({action:'botTeach', q, a});
+  if(r.ok){ toast('Learned 🧠','ok'); BOT_BRAIN.taught.push({q,a}); botMsg('bot','Got it — I\'ll remember that next time.'); }
+  else toast(r.msg||'Failed','err');
+}
+
+boot();
+</script>
+</body>
+</html>

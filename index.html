@@ -66,6 +66,7 @@ label.fld{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px;text
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow)}
 .badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;text-transform:uppercase;letter-spacing:.4px;backdrop-filter:blur(6px)}
 .b-video{background:rgba(201,162,75,.92);color:#1a1400}
+.b-youtube{background:#ff0033;color:#fff}
 .b-pdf{background:rgba(255,107,125,.9);color:#fff}
 .b-note{background:rgba(61,220,151,.9);color:#05140d}
 .b-folder{background:rgba(255,193,94,.92);color:#2a1c00}
@@ -205,6 +206,16 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 .searchx:hover{color:var(--txt)}
 /* view-count badge on card */
 .vcount{position:absolute;bottom:10px;right:10px;background:rgba(8,8,10,.72);color:#f0d9a0;font-size:11px;font-weight:600;padding:3px 9px;border-radius:7px;backdrop-filter:blur(4px);border:1px solid rgba(201,162,75,.25)}
+/* breadcrumb */
+.crumb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:16px 0 4px}
+.crumb a{color:var(--accent-ink)}.crumb .csep{opacity:.5}
+/* availability badges */
+.abwrap{position:absolute;bottom:10px;left:10px}
+.lockb{display:inline-flex;align-items:center;gap:4px;background:rgba(8,8,10,.78);color:#ffd79a;font-size:11px;font-weight:600;padding:3px 9px;border-radius:7px;backdrop-filter:blur(4px);border:1px solid rgba(255,193,94,.3)}
+.lockb.live{color:#8ff0c6;border-color:rgba(61,220,151,.3)}
+.lockb.exp{color:#ffb0ba;border-color:rgba(255,107,125,.3)}
+.playb.lock{background:rgba(8,8,10,.8);color:#ffd79a;opacity:1;box-shadow:none}
+.icard.locked .ithumb img,.icard.locked .ph{filter:grayscale(.5) brightness(.6)}
 /* leak-deterrent watermark overlay */
 .wm{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;display:flex;flex-wrap:wrap;gap:34px 46px;padding:24px;transform:rotate(-24deg) scale(1.5);transform-origin:center;opacity:.07}
 .wm span{font-family:var(--font-m);font-size:12px;color:#f0d9a0;white-space:nowrap;letter-spacing:1px}
@@ -338,10 +349,10 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 
 <script>
 /* ============ CONFIG ============ */
-const API_DEFAULT = 'https://script.google.com/macros/s/AKfycbzn1H_XOOLPQsMtB4A4ouVYnr6wmS7TIj2y5rnaBJVQEIM303uvACr1vUPBQCwF7wc5gQ/exec';
+const API_DEFAULT = 'https://script.google.com/macros/s/AKfycbwB6m6GZ1trLEAEg-yhVIEknjXdPASMxFDCDRHmOJLtJYhuyFAK6RZUNn8jXq7NfDuJTw/exec';
 let API = localStorage.getItem('aur_api') || API_DEFAULT;
 const BRAND = 'Aurevia';
-const APP_VERSION = '2.0.0';
+const APP_VERSION = '2.2.0';
 function apiOk(u){ return /\/macros\/(s|.*\/s)\/[^/]+\/exec$/.test(String(u||'')); }
 
 /* ============ STATE ============ */
@@ -530,7 +541,7 @@ function go(pg){
 }
 
 /* ============ DASHBOARD / LIBRARY ============ */
-const ICON={video:'🎬',pdf:'📄',note:'📝',folder:'📁'};
+const ICON={video:'🎬',youtube:'▶️',pdf:'📄',note:'📝',folder:'📁'};
 function statTile(icon,n,l){ return '<div class="stat"><div class="si">'+icon+'</div><div class="snum">'+n+'</div><div class="slbl">'+l+'</div></div>'; }
 async function loadLibrary(){
   if(ITEMS.length) renderLibrary();   // instant from cache, then refresh silently
@@ -539,8 +550,14 @@ async function loadLibrary(){
   if(r.ok){ ITEMS=r.items||[]; renderLibrary(); }
   else if(!ITEMS.length){ $('pg-library').innerHTML='<h2 class="pt">Dashboard</h2><p class="psub" style="color:var(--err)">'+esc(r.msg||'Failed')+'</p>'; }
 }
-let CUR_WEEK = null;   // null = all; number = week; 0 = unsorted
+let CUR_CAT = null;    // null = show category folders; '__all' = all categories; else category name
+let CUR_WEEK = null;   // null = show week folders in category; 'all' = every week; else week number
+function catName(it){ return String(it.category||'').trim() || 'Uncategorized'; }
+function selectCat(c){ CUR_CAT=c; CUR_WEEK=null; renderLibrary(); window.scrollTo({top:0,behavior:'smooth'}); }
 function selectWeek(w){ CUR_WEEK = (w==='all') ? 'all' : Number(w); renderLibrary(); window.scrollTo({top:0,behavior:'smooth'}); }
+function navRoot(){ CUR_CAT=null; CUR_WEEK=null; renderLibrary(); }
+function navCat(){ CUR_WEEK=null; renderLibrary(); }
+function catItems(c){ return (c==='__all') ? ITEMS.slice() : ITEMS.filter(i=>catName(i)===c); }
 function ago(ts){
   if(!ts) return ''; const s=Math.floor((Date.now()-ts)/1000);
   if(s<60) return 'just now';
@@ -563,8 +580,9 @@ function renderLibrary(){
   const totalViews=ITEMS.reduce((a,i)=>a+(i.views||0),0);
   const weeks=[...new Set(ITEMS.map(i=>i.week||0))];
   const nWeeks=weeks.filter(w=>w>0).length;
-  let html='<h2 class="pt">Dashboard</h2><p class="psub">Your private vault — search or browse by week.</p>'+
-    '<div class="stats">'+statTile('📦',ITEMS.length,'Total items')+statTile('🗓️',nWeeks,'Weeks')+statTile('🎬',vids,'Videos')+statTile('👁',totalViews,'Total views')+'</div>';
+  const nCats=new Set(ITEMS.map(catName)).size;
+  let html='<h2 class="pt">Dashboard</h2><p class="psub">Your private vault — search or browse by category.</p>'+
+    '<div class="stats">'+statTile('🗃️',nCats,'Categories')+statTile('🗓️',nWeeks,'Weeks')+statTile('🎬',vids,'Videos')+statTile('👁',totalViews,'Total views')+'</div>';
   if(!ITEMS.length){
     html+='<div class="card" style="padding:48px;text-align:center;color:var(--muted);margin-top:20px">Nothing here yet.'+(SESSION.isAdmin?' <a href="#" onclick="go(\'add\');return false">Add your first item →</a>':'')+'</div>';
     $('pg-library').innerHTML=html; return;
@@ -572,7 +590,7 @@ function renderLibrary(){
   // search bar
   html+='<div class="searchbar"><span class="si2">🔍</span><input id="libSearch" class="inp" placeholder="Search by title, tag or week…" value="'+esc(LIB_Q)+'" oninput="doLibSearch(this.value)"><button class="searchx" id="libSearchX" onclick="clearLibSearch()" style="'+(LIB_Q?'':'display:none')+'">✕</button></div>';
   html+='<div id="searchResults"'+(LIB_Q?'':' class="hide"')+'></div>';
-  html+='<div id="libBrowse"'+(LIB_Q?' class="hide"':'')+'>'+buildBrowse(weeks)+'</div>';
+  html+='<div id="libBrowse"'+(LIB_Q?' class="hide"':'')+'>'+buildBrowse()+'</div>';
   // recent uploads — always latest 5
   const recent=ITEMS.slice().sort((a,b)=>(b._ts||0)-(a._ts||0)).slice(0,5);
   html+='<div class="recent-sec"><div class="whead"><span class="wtitle">Recent uploads</span><span class="wpill">last 5</span><span class="wline"></span></div>'+
@@ -580,24 +598,45 @@ function renderLibrary(){
   $('pg-library').innerHTML=html;
   if(LIB_Q) renderSearch();
 }
-function buildBrowse(weeks){
-  const sortedWeeks=weeks.slice().sort((a,b)=>b-a);
+function catcard(val,icon,label,n,active){
+  return '<div class="wcard'+(active?' on':'')+'" onclick="selectCat(\''+String(val).replace(/'/g,"\\'")+'\')"><div class="wic">'+icon+'</div><div class="wc-t">'+esc(label)+'</div><div class="wc-n">'+n+' item'+(n!==1?'s':'')+'</div></div>';
+}
+function crumb(){
+  let h='<div class="crumb"><a href="#" onclick="navRoot();return false">🏠 Categories</a>';
+  if(CUR_CAT!==null){ const lab=CUR_CAT==='__all'?'All items':CUR_CAT; h+=' <span class="csep">▸</span> <a href="#" onclick="navCat();return false">'+esc(lab)+'</a>'; }
+  if(CUR_CAT!==null && CUR_WEEK!==null && CUR_WEEK!=='all'){ h+=' <span class="csep">▸</span> <span>'+(CUR_WEEK>0?'Week '+CUR_WEEK:'Unsorted')+'</span>'; }
+  return h+'</div>';
+}
+function buildBrowse(){
+  // LEVEL 0 — category folders
+  if(CUR_CAT===null){
+    const cats=[...new Set(ITEMS.map(catName))].sort((a,b)=> a==='Uncategorized'?1 : b==='Uncategorized'?-1 : a.localeCompare(b));
+    let g='<div class="psub2">Browse by category</div><div class="wgrid">'+
+      catcard('__all','🗂️','All items',ITEMS.length,false);
+    cats.forEach(c=>{ g+=catcard(c, c==='Uncategorized'?'📂':'🗃️', c, catItems(c).length, false); });
+    return g+'</div>';
+  }
+  // within a category (or __all)
+  const pool=catItems(CUR_CAT);
+  const weeks=[...new Set(pool.map(i=>i.week||0))].sort((a,b)=>b-a);
+  let html=crumb();
+  // LEVEL 1 — week folders inside the category
   let wsel='<div class="psub2">Browse by week</div><div class="wgrid">'+
-    wcard('all','🗂️','All items',ITEMS.length, CUR_WEEK==='all');
-  sortedWeeks.forEach(w=>{ const n=ITEMS.filter(i=>(i.week||0)===w).length; wsel+=wcard(w, w>0?'🗓️':'📂', w>0?('Week '+w):'Unsorted', n, CUR_WEEK===w); });
-  wsel+='</div>';
-  let html=wsel;
+    wcard('all','📚','All weeks',pool.length, CUR_WEEK==='all');
+  weeks.forEach(w=>{ const n=pool.filter(i=>(i.week||0)===w).length; wsel+=wcard(w, w>0?'🗓️':'📄', w>0?('Week '+w):'Unsorted', n, CUR_WEEK===w); });
+  html+=wsel+'</div>';
+  // LEVEL 2 — items
   if(CUR_WEEK==='all'){
-    const sw=weeks.slice().sort((a,b)=>b-a); let idx=0;
-    sw.forEach(w=>{
-      const list=ITEMS.filter(i=>(i.week||0)===w), lab=w>0?('Week '+w):'Unsorted';
+    let idx=0;
+    weeks.forEach(w=>{
+      const list=pool.filter(i=>(i.week||0)===w), lab=w>0?('Week '+w):'Unsorted';
       html+='<div class="wsec"><div class="whead"><span class="wtitle">'+lab+'</span><span class="wpill">'+list.length+' item'+(list.length!==1?'s':'')+'</span><span class="wline"></span></div>'+
         '<div class="grid">'+list.map(it=>{ idx++; return itemCard(it,idx); }).join('')+'</div></div>';
     });
   } else if(CUR_WEEK!==null){
-    const shown = ITEMS.filter(i=>(i.week||0)===CUR_WEEK);
-    const title = CUR_WEEK>0?('Week '+CUR_WEEK):'Unsorted';
-    html+='<div class="whead" style="margin-top:14px"><span class="wtitle">'+esc(title)+'</span><span class="wpill">'+shown.length+' item'+(shown.length!==1?'s':'')+'</span><a href="#" onclick="selectWeek(\'all\');return false" style="font-size:12.5px">← all weeks</a><span class="wline"></span></div>'+
+    const shown=pool.filter(i=>(i.week||0)===CUR_WEEK);
+    const title=CUR_WEEK>0?('Week '+CUR_WEEK):'Unsorted';
+    html+='<div class="whead" style="margin-top:14px"><span class="wtitle">'+esc(title)+'</span><span class="wpill">'+shown.length+' item'+(shown.length!==1?'s':'')+'</span><span class="wline"></span></div>'+
       (shown.length ? '<div class="grid">'+shown.map((it,i)=>itemCard(it,i+1)).join('')+'</div>'
                     : '<div class="card" style="padding:36px;text-align:center;color:var(--muted)">No items in '+esc(title)+'.</div>');
   }
@@ -618,25 +657,35 @@ function renderSearch(){
     (it.title||'').toLowerCase().includes(q) ||
     (it.tags||'').toLowerCase().includes(q) ||
     (it.description||'').toLowerCase().includes(q) ||
+    catName(it).toLowerCase().includes(q) ||
     ('week '+(it.week||0)).includes(q) || String(it.type).includes(q));
   sr.innerHTML='<div class="whead"><span class="wtitle">Search results</span><span class="wpill">'+matches.length+' match'+(matches.length!==1?'es':'')+'</span><span class="wline"></span></div>'+
     (matches.length ? '<div class="grid">'+matches.map((it,i)=>itemCard(it,i+1)).join('')+'</div>'
                     : '<div class="card" style="padding:40px;text-align:center;color:var(--muted)">No items match "'+esc(LIB_Q)+'".</div>');
 }
+function availBadge(it){
+  if(it.avail_state==='pending') return '<span class="lockb">🔒 Opens '+shortDate(it.avail_from)+'</span>';
+  if(it.avail_state==='expired') return '<span class="lockb exp">⌛ Expired</span>';
+  if(it.avail_until) return '<span class="lockb live">⏳ Until '+shortDate(it.avail_until)+'</span>';
+  return '';
+}
+function shortDate(iso){ try{ const d=new Date(iso); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'})+' '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
 function itemCard(it,i){
   const img = it.thumb ? '<img src="'+esc(it.thumb)+'" loading="lazy" onerror="this.remove()">' : '';
-  const play = it.type==='video' ? '<div class="playb">▶</div>' : '';
+  const locked = !!it.locked;
+  const play = (!locked&&(it.type==='video'||it.type==='youtube')) ? '<div class="playb">▶</div>' : (locked?'<div class="playb lock">🔒</div>':'');
   const wk = it.week>0 ? '<span class="badge b-mut">Week '+it.week+'</span>' : '<span class="badge b-mut">Unsorted</span>';
   const views = (it.views>0) ? '<span class="vcount">👁 '+it.views+'</span>' : '';
+  const ab = availBadge(it);
   const adminActs = SESSION.isAdmin
     ? '<button class="iconbtn2" title="Edit" onclick="editItem(\''+it.id+'\')">✏</button><button class="iconbtn2 danger" title="Delete" onclick="delItem(\''+it.id+'\')">🗑</button>' : '';
-  return '<div class="icard" style="animation-delay:'+Math.min(i*35,320)+'ms">'+
+  return '<div class="icard'+(locked?' locked':'')+'" style="animation-delay:'+Math.min(i*35,320)+'ms">'+
     '<div class="ithumb" style="cursor:pointer" onclick="openItem(\''+it.id+'\')"><div class="ph">'+ICON[it.type]+'</div>'+img+'<div class="tov"></div>'+play+
-      '<div class="tchips"><span class="badge b-'+it.type+'">'+it.type+'</span>'+wk+'</div>'+views+'</div>'+
+      '<div class="tchips"><span class="badge b-'+it.type+'">'+it.type+'</span>'+wk+'</div>'+views+(ab?'<div class="abwrap">'+ab+'</div>':'')+'</div>'+
     '<div class="ibody">'+
       '<div class="ititle">'+esc(it.title)+'</div>'+
       (it.description?'<div class="idesc">'+esc(it.description)+'</div>':'')+
-      '<div class="iacts"><button class="btn sm" onclick="openItem(\''+it.id+'\')">Open</button>'+
+      '<div class="iacts"><button class="btn sm" onclick="openItem(\''+it.id+'\')">'+(locked?'Locked':'Open')+'</button>'+
         '<button class="iconbtn2" title="Share link" onclick="shareItem(\''+it.id+'\')">🔗</button>'+adminActs+'</div>'+
     '</div></div>';
 }
@@ -648,11 +697,21 @@ function wmHTML(){
   if(!tag) return '';
   return '<div class="wm" aria-hidden="true">'+Array(80).fill('<span>'+tag+' · AUREVIA</span>').join('')+'</div>';
 }
+function lockModal(it){
+  const msg = it.avail_state==='pending'
+    ? 'This content unlocks on <b style="color:var(--accent-ink)">'+shortDate(it.avail_from)+'</b>.'
+    : (it.avail_state==='expired'
+      ? 'This content expired on <b style="color:var(--accent-ink)">'+shortDate(it.avail_until)+'</b> and is no longer available.'
+      : 'This content is not available right now.');
+  openModal('<div class="mhead"><b>🔒 '+esc(it.title)+'</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody" style="text-align:center;padding:36px 22px"><div style="font-size:46px;margin-bottom:10px">🔒</div><p style="color:var(--muted);line-height:1.7">'+msg+'</p><button class="btn" style="margin-top:18px" onclick="closeModal()">OK</button></div>');
+}
 async function openItem(id){
   const it=ITEMS.find(x=>x.id===id); if(!it) return;
+  if(it.locked){ lockModal(it); return; }   // time window not open (non-admin)
   if(SESSION){ it.views=(it.views||0)+1; api({action:'bumpView', id:it.id}, true); }   // count + persist silently
   openModal('<div class="mhead"><div><b>'+esc(it.title)+'</b> <span class="badge b-'+it.type+'">'+it.type+'</span></div><button class="x" onclick="closeModal()">×</button></div><div class="mbody" id="vBody"><p style="color:var(--muted)">Loading…</p></div>', true);
   if(it.type==='video'){ renderVideo($('vBody'), it.drive_id, it.description); }
+  else if(it.type==='youtube'){ renderYouTube($('vBody'), it.drive_id, it.description); }
   else if(it.type==='note'){ renderNote($('vBody'), it); }
   else if(it.type==='folder'){ renderFolder($('vBody'), it); }
   else {
@@ -669,6 +728,11 @@ function renderDriveStream(box, it, note){
     (note?'<p style="color:var(--warn);font-size:12px;margin-bottom:10px">'+esc(note)+' — streaming directly from Drive instead.</p>':'')+
     '<div class="vwrap" oncontextmenu="return false">'+wmHTML()+'<iframe class="vframe" src="'+prev+'" allow="autoplay" allowfullscreen></iframe></div>'+
     '<a class="btn ghost sm" style="margin-top:10px;text-decoration:none" href="'+view+'" target="_blank" rel="noopener">Open in Drive ↗</a>';
+}
+function renderYouTube(box, ytId, desc){
+  box.innerHTML = (desc?'<p style="color:var(--muted);margin-bottom:12px">'+esc(desc)+'</p>':'')+
+    '<div class="vwrap" oncontextmenu="return false">'+wmHTML()+'<iframe class="vframe" src="https://www.youtube-nocookie.com/embed/'+esc(ytId)+'?rel=0&modestbranding=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div>'+
+    '<p style="color:var(--faint);font-size:11.5px;margin-top:8px">Unlisted YouTube — visible only to logged-in Aurevia users here.</p>';
 }
 function renderVideo(box, driveId, desc){
   box.innerHTML = (desc?'<p style="color:var(--muted);margin-bottom:12px">'+esc(desc)+'</p>':'')+
@@ -708,28 +772,37 @@ async function openChild(itemId, driveId, ftype, btn){
 }
 
 /* ---- add / edit item (admin) ---- */
+function catOptions(sel){
+  const cats=[...new Set(ITEMS.map(catName))].filter(c=>c&&c!=='Uncategorized').sort();
+  return cats.map(c=>'<option value="'+esc(c)+'"'+(sel===c?' selected':'')+'>'+esc(c)+'</option>').join('');
+}
 function renderAdd(){
   $('pg-add').innerHTML =
-    '<h2 class="pt">Add content</h2><p class="psub">Add a video, PDF, note or folder — paste a Drive link or upload from your device.</p>'+
-    '<div class="card" style="padding:24px;max-width:640px">'+
-    '<div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:2;min-width:160px"><label class="fld">Type</label><select id="fType" onchange="addTypeChange()"><option value="video">🎬 Video (link mode)</option><option value="pdf">📄 PDF (secure proxy)</option><option value="note">📝 Note</option><option value="folder">📁 Folder</option></select></div><div style="flex:1;min-width:110px"><label class="fld">Week</label><input class="inp" id="fWeek" type="number" min="0" value="1" placeholder="1"></div></div>'+
+    '<h2 class="pt">Add content</h2><p class="psub">Organise as Category ▸ Week ▸ item. Set an optional time window to auto-lock / expire.</p>'+
+    '<div class="card" style="padding:24px;max-width:660px">'+
+    '<div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:2;min-width:160px"><label class="fld">Type</label><select id="fType" onchange="addTypeChange()"><option value="video">🎬 Video (Drive)</option><option value="youtube">▶️ YouTube (unlisted link)</option><option value="pdf">📄 PDF (secure proxy)</option><option value="note">📝 Note</option><option value="folder">📁 Folder</option></select></div><div style="flex:1;min-width:110px"><label class="fld">Week</label><input class="inp" id="fWeek" type="number" min="0" value="1" placeholder="1"></div></div>'+
+    '<label class="fld">Category / Folder</label><div class="uprow"><input class="inp" id="fCat" list="catList" placeholder="e.g. Course A, Batch 2025…"><datalist id="catList">'+catOptions('')+'</datalist></div>'+
     '<div id="fDriveWrap"><label class="fld">Drive link / ID</label><div class="uprow"><input class="inp" id="fDrive" placeholder="Paste a Drive link or upload →"><button class="btn ghost sm" id="fUpBtn" onclick="uploadContent(this)">⬆ Upload file</button></div></div>'+
     '<div id="fBodyWrap" class="hide"><label class="fld">Note text</label><textarea id="fBody" rows="6" placeholder="Write here…"></textarea></div>'+
     '<label class="fld">Title</label><input class="inp" id="fTitle" placeholder="Required">'+
     '<label class="fld">Short description (optional)</label><input class="inp" id="fDesc">'+
     '<label class="fld">Thumbnail (optional)</label><div class="uprow"><input class="inp" id="fThumb" placeholder="Paste an image URL or upload →"><button class="btn ghost sm" onclick="uploadThumbPick(this,\'fThumb\',\'fThumbPrev\')">⬆ Upload image</button></div><img id="fThumbPrev" class="thumbprev" alt="">'+
+    '<div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:150px"><label class="fld">Available from (optional)</label><input class="inp" id="fFrom" type="datetime-local"></div><div style="flex:1;min-width:150px"><label class="fld">Available until (optional)</label><input class="inp" id="fUntil" type="datetime-local"></div></div>'+
     '<label class="fld">Tags (optional, comma-separated)</label><input class="inp" id="fTags">'+
     '<button class="btn" style="margin-top:20px;width:100%" onclick="addItem()">Add to library 🚀</button>'+
-    '<p style="color:var(--faint);font-size:11.5px;margin-top:14px">Videos use Drive\'s native player (any size, up to 10–12GB). PDFs &amp; notes are app-streamed and private up to 40MB; larger files open straight from Drive, so add them as Video or share the Drive file "anyone with link".</p>'+
+    '<p style="color:var(--faint);font-size:11.5px;margin-top:14px">Time window locks content for members before “from” and after “until” (admins always see it). YouTube must be <b>Unlisted</b> (private won’t embed).</p>'+
     '</div>';
 }
 function addTypeChange(){
   const t=$('fType').value;
   $('fBodyWrap').classList.toggle('hide', t!=='note');
   const lbl=$('fDriveWrap').querySelector('label');
-  lbl.textContent = t==='folder' ? 'Drive folder link / ID' : (t==='note' ? 'Drive link / ID (optional — or write text below)' : 'Drive link / ID');
+  lbl.textContent = t==='folder' ? 'Drive folder link / ID'
+    : t==='youtube' ? 'YouTube link (unlisted or public)'
+    : (t==='note' ? 'Drive link / ID (optional — or write text below)' : 'Drive link / ID');
+  $('fDrive').placeholder = t==='youtube' ? 'https://youtu.be/… or https://www.youtube.com/watch?v=…' : 'Paste a Drive link or upload →';
   const up=$('fUpBtn');
-  up.style.display = (t==='folder') ? 'none' : '';   // folders come from Drive, not upload
+  up.style.display = (t==='folder'||t==='youtube') ? 'none' : '';   // folder/youtube come from link, not upload
   up.textContent = t==='video' ? '⬆ Upload video' : '⬆ Upload file';
 }
 async function uploadContent(btn){
@@ -798,8 +871,9 @@ async function uploadThumbPick(btn, targetId, prevId){
 async function addItem(){
   const type=$('fType').value, title=$('fTitle').value.trim();
   if(!title){ toast('Enter a title','err'); return; }
-  const payload={action:'addItem', type, title, week:$('fWeek').value, drive:$('fDrive').value.trim(),
-    description:$('fDesc').value.trim(), thumb:$('fThumb').value.trim(), tags:$('fTags').value.trim(),
+  const payload={action:'addItem', type, title, week:$('fWeek').value, category:$('fCat').value.trim(),
+    drive:$('fDrive').value.trim(), description:$('fDesc').value.trim(), thumb:$('fThumb').value.trim(), tags:$('fTags').value.trim(),
+    avail_from:$('fFrom').value, avail_until:$('fUntil').value,
     body:(type==='note'?$('fBody').value:'')};
   const r=await api(payload);
   if(r.ok){
@@ -817,17 +891,20 @@ function postCreate(id){
 }
 function editItem(id){
   const it=ITEMS.find(x=>x.id===id); if(!it) return;
-  const curThumb = it.thumb && it.thumb.indexOf("drive.google.com/thumbnail")<0 ? it.thumb : '';
+  const curThumb = it.thumb && it.thumb.indexOf("drive.google.com/thumbnail")<0 && it.thumb.indexOf("i.ytimg.com")<0 ? it.thumb : '';
   openModal('<div class="mhead"><b>Edit item</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody">'+
     '<label class="fld">Title</label><input class="inp" id="eTitle" value="'+esc(it.title)+'">'+
-    '<label class="fld">Week</label><input class="inp" id="eWeek" type="number" min="0" value="'+(it.week||0)+'">'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap"><div style="flex:2;min-width:150px"><label class="fld">Category / Folder</label><input class="inp" id="eCat" list="catListE" value="'+esc(it.category||'')+'"><datalist id="catListE">'+catOptions(it.category)+'</datalist></div><div style="flex:1;min-width:90px"><label class="fld">Week</label><input class="inp" id="eWeek" type="number" min="0" value="'+(it.week||0)+'"></div></div>'+
     '<label class="fld">Description</label><input class="inp" id="eDesc" value="'+esc(it.description||'')+'">'+
     '<label class="fld">Thumbnail</label><div class="uprow"><input class="inp" id="eThumb" value="'+esc(curThumb)+'" placeholder="Image URL or upload →"><button class="btn ghost sm" onclick="uploadThumbPick(this,\'eThumb\',\'eThumbPrev\')">⬆ Upload</button></div><img id="eThumbPrev" class="thumbprev" alt="">'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap"><div style="flex:1;min-width:150px"><label class="fld">Available from</label><input class="inp" id="eFrom" type="datetime-local" value="'+toLocalInput(it.avail_from)+'"></div><div style="flex:1;min-width:150px"><label class="fld">Available until</label><input class="inp" id="eUntil" type="datetime-local" value="'+toLocalInput(it.avail_until)+'"></div></div>'+
     (it.type==='note'?'<label class="fld">Note text</label><textarea id="eBody" rows="5">'+esc(it.body||'')+'</textarea>':'')+
     '<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn" style="flex:1;min-width:120px" onclick="saveEdit(\''+id+'\','+(it.type==='note')+')">Save 💾</button><button class="btn err ghost" onclick="delItem(\''+id+'\')">Delete</button></div></div>');
 }
+function toLocalInput(iso){ if(!iso) return ''; try{ const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes()); }catch(e){ return ''; } }
 async function saveEdit(id, isNote){
-  const p={action:'updateItem', id, title:$('eTitle').value.trim(), week:$('eWeek').value, description:$('eDesc').value.trim(), thumb:$('eThumb').value.trim()};
+  const p={action:'updateItem', id, title:$('eTitle').value.trim(), week:$('eWeek').value, category:$('eCat').value.trim(),
+    description:$('eDesc').value.trim(), thumb:$('eThumb').value.trim(), avail_from:$('eFrom').value, avail_until:$('eUntil').value};
   if(isNote) p.body=$('eBody').value;
   const r=await api(p);
   if(r.ok){ toast('Saved ✅','ok'); closeModal(); loadLibrary(); } else toast(r.msg||'Failed','err');
@@ -934,12 +1011,14 @@ async function renderShare(sid){
   const r=await api({action:'openShare', share_id:sid}, true);
   if(!r.ok){ shareDenied(r.msg||'Invalid link', '🚫'); return; }
   if(r.expired){ shareExpired(r.label); return; }
+  if(r.locked){ shareDenied(r.msg||'This content is not available right now.', '🔒'); return; }
   const res=r.resource;
   const head='<div class="sbar"><div class="wordmark" style="font-size:20px"><span class="dot">Au</span> Aurevia</div><div style="color:var(--muted);font-size:13px">'+esc(r.label||'')+'</div><div style="flex:1"></div><div class="cdbox">⏳ <span class="cdnum" id="cdNum">…</span></div></div>';
   v.innerHTML=head+'<div class="sbig card" style="padding:24px" id="sRes"><p style="color:var(--muted)">Loading…</p></div>';
   startCountdown(r.expires_ts,'cdNum', ()=>renderShare(sid));
   const box=$('sRes');
   if(res.kind==='video'){ renderVideo(box, res.drive_id, res.description); }
+  else if(res.kind==='youtube'){ renderYouTube(box, res.yt_id, res.description); }
   else if(res.kind==='note'){ box.innerHTML='<h3 style="margin-bottom:10px">'+esc(res.title)+'</h3><div class="notebody">'+esc(res.body||'')+'</div>'; }
   else if(res.kind==='file'){ shareFile(sid, res, box); }
   else if(res.kind==='folder'){ shareFolder(sid, res, box); }

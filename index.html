@@ -153,7 +153,9 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 .wline{flex:1;height:1px;background:var(--line)}
 .psub2{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin-top:24px;margin-bottom:2px;font-weight:600}
 .wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:12px 0 6px}
-.wcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;transition:transform .2s var(--ease),border-color .2s,background .2s;animation:fadeUp .35s var(--ease) backwards}
+.wcard{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;transition:transform .2s var(--ease),border-color .2s,background .2s;animation:fadeUp .35s var(--ease) backwards}
+.cardadd{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:9px;border:1px solid var(--line2);background:var(--bg2);color:var(--accent-ink);font-size:17px;font-weight:700;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;z-index:2}
+.cardadd:hover{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1400;border-color:transparent}
 .wcard:hover{transform:translateY(-3px);border-color:var(--line2)}
 .wcard.on{border-color:var(--accent);background:linear-gradient(160deg,rgba(201,162,75,.2),var(--surface))}
 .wic{width:40px;height:40px;border-radius:12px;background:rgba(201,162,75,.15);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:10px}
@@ -353,10 +355,10 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 
 <script>
 /* ============ CONFIG ============ */
-const API_DEFAULT = 'https://script.google.com/macros/s/AKfycbw5Vsd_bKZyl2fCM7FPgVhXehrRYXKfn9EUmA38CrDpoUxtDziRcJ_ocm_Iy9ih1Tur3Q/exec';
+const API_DEFAULT = 'https://script.google.com/macros/s/AKfycbzf7HTaqLlvvSFWZH3LmWEGTl20gG4YAJ9E5QJxV9qgJQFbkD1dQMeS4FM0AGAlrFQ/exec';
 let API = localStorage.getItem('aur_api') || API_DEFAULT;
 const BRAND = 'Aurevia';
-const APP_VERSION = '2.3.1';
+const APP_VERSION = '2.3.5';
 function apiOk(u){ return /\/macros\/(s|.*\/s)\/[^/]+\/exec$/.test(String(u||'')); }
 
 /* ============ STATE ============ */
@@ -524,12 +526,14 @@ async function resendCode(){ const r=await api({action:'resendOtp', email:authEm
 /* ============ APP SHELL ============ */
 function toggleSide(){ $('appView').classList.toggle('side-open'); }
 function closeSide(){ $('appView').classList.remove('side-open'); }
-const NAV=[['library','🏠','Dashboard'],['shares','🔗','Shares'],['users','👥','Users'],['add','＋','Add Content']];
+const NAV=[['library','🏠','Dashboard'],['shares','🔗','Shares'],['users','👥','Users'],['newfolder','➕','New Folder']];
 function showApp(){
   $('authView').style.display='none'; $('shareView').style.display='none'; $('appView').classList.add('ready');
   const admin=SESSION.isAdmin;
-  $('nav').innerHTML = NAV.filter(n=>admin||['library','shares'].includes(n[0])).map((n,i)=>
-    '<button class="pill'+(i===0?' on':'')+'" data-pg="'+n[0]+'" onclick="go(\''+n[0]+'\')"><span class="ni">'+n[1]+'</span><span>'+n[2]+'</span></button>').join('');
+  $('nav').innerHTML = NAV.filter(n=>admin||['library','shares'].includes(n[0])).map((n,i)=>{
+    const act = n[0]==='newfolder' ? 'createFolder()' : 'go(\''+n[0]+'\')';
+    return '<button class="pill'+(i===0?' on':'')+'" data-pg="'+n[0]+'" onclick="'+act+'"><span class="ni">'+n[1]+'</span><span>'+n[2]+'</span></button>';
+  }).join('');
   $('uchip').innerHTML='<div class="ucard"><div class="uav">'+initials(SESSION.name)+'</div><div style="min-width:0"><div class="uname">'+esc(SESSION.name)+'</div><div class="urole">'+esc(SESSION.role)+'</div></div></div><button class="btn ghost sm" style="width:100%;margin-top:11px" onclick="signOut()">Sign out 👋</button>';
   $('footer').textContent=BRAND+' · Secure sharing · v'+APP_VERSION;
   go('library');
@@ -571,8 +575,12 @@ function createFolder(){
 async function saveFolder(){
   const name=($('nfName').value||'').trim(); if(!name){ toast('Enter a name','err'); return; }
   const r=await api({action:'createFolder', name});
-  if(!r.ok){ toast(r.msg||'Failed','err'); return; }
-  FOLDERS=r.folders||FOLDERS; toast(r.msg||'Folder created ✅','ok'); closeModal(); selectCat(r.name||name);
+  if(!r.ok){ toast(r.msg||'Failed — is the backend updated to v2.3+? (deploy Code.gs)','err'); return; }
+  // merge folder locally so it shows even if backend did not echo it
+  FOLDERS = r.folders && r.folders.length ? r.folders : [...new Set([...FOLDERS, r.name||name])];
+  toast(r.msg||'Folder created ✅','ok'); closeModal();
+  CUR_CAT=null; CUR_WEEK=null; renderLibrary();   // stay on dashboard so the new folder card is visible
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 function addToFolder(c){ ADD_PRECAT=c; go('add'); }
 function ago(ts){
@@ -601,7 +609,9 @@ function renderLibrary(){
   let html='<h2 class="pt">Dashboard</h2><p class="psub">Your private vault — search or browse by category.</p>'+
     '<div class="stats">'+statTile('🗃️',nCats,'Categories')+statTile('🗓️',nWeeks,'Weeks')+statTile('🎬',vids,'Videos')+statTile('👁',totalViews,'Total views')+'</div>';
   if(!ITEMS.length){
-    html+='<div class="card" style="padding:48px;text-align:center;color:var(--muted);margin-top:20px">Nothing here yet.'+(SESSION.isAdmin?' <a href="#" onclick="go(\'add\');return false">Add your first item →</a>':'')+'</div>';
+    // no items yet — still show folders + Create Folder so admin can set up
+    html+='<div style="margin-top:14px">'+buildBrowse()+'</div>';
+    if(CUR_CAT===null) html+='<div class="card" style="padding:28px;text-align:center;color:var(--muted);margin-top:14px">No content yet.'+(SESSION.isAdmin?' Create a folder, open it, then “Add Files / Videos”.':'')+'</div>';
     $('pg-library').innerHTML=html; return;
   }
   // search bar
@@ -616,7 +626,10 @@ function renderLibrary(){
   if(LIB_Q) renderSearch();
 }
 function catcard(val,icon,label,n,active){
-  return '<div class="wcard'+(active?' on':'')+'" onclick="selectCat(\''+String(val).replace(/'/g,"\\'")+'\')"><div class="wic">'+icon+'</div><div class="wc-t">'+esc(label)+'</div><div class="wc-n">'+n+' item'+(n!==1?'s':'')+'</div></div>';
+  const escv=String(val).replace(/'/g,"\\'");
+  const addBtn=(SESSION.isAdmin && val!=='__all')
+    ? '<button class="cardadd" title="Add Files / Videos here" onclick="event.stopPropagation();addToFolder(\''+escv+'\')">＋</button>' : '';
+  return '<div class="wcard'+(active?' on':'')+'" onclick="selectCat(\''+escv+'\')">'+addBtn+'<div class="wic">'+icon+'</div><div class="wc-t">'+esc(label)+'</div><div class="wc-n">'+n+' item'+(n!==1?'s':'')+'</div></div>';
 }
 function crumb(){
   let h='<div class="crumb"><a href="#" onclick="navRoot();return false">🏠 Categories</a>';

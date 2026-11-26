@@ -9,31 +9,32 @@
 <title>Aurevia</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c6cf0'/%3E%3Cstop offset='1' stop-color='%23a996ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='Arial' font-size='34' font-weight='bold' fill='%23fff' text-anchor='middle'%3EAu%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0a0c; --bg2:#101012; --surface:#15151a; --surface2:#1c1c22;
-  --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.13);
-  --txt:#e9eaf2; --muted:#8b90a6; --faint:#5c6178;
-  --accent:#c9a24b; --accent2:#e8c877; --accent-ink:#f0d9a0;
-  --ok:#3ddc97; --warn:#ffc15e; --err:#ff6b7d;
-  --r:14px; --r-lg:20px;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.4);
-  --shadow-lg:0 26px 64px rgba(0,0,0,.6);
-  --ease:cubic-bezier(.16,1,.3,1); --side:248px;
-  --font:'Jost',system-ui,sans-serif;
-  --font-d:'Space Grotesk','Jost',sans-serif;
-  --font-m:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  --bg:#090909; --bg2:#101010; --sidebar:#0d0d0d; --surface:#151515; --surface2:#1c1c1c;
+  --line:rgba(198,165,107,.14); --line2:rgba(198,165,107,.26);
+  --txt:#f5f1e9; --muted:#a7a197; --faint:#716c64;
+  --accent:#c6a56b; --accent2:#a98a59; --accent-ink:#d8bd87;
+  --ok:#7fa68a; --warn:#c6a56b; --err:#c76d6d;
+  --r:12px; --r-lg:16px;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 12px 30px rgba(0,0,0,.45);
+  --shadow-lg:0 30px 70px rgba(0,0,0,.65);
+  --ease:cubic-bezier(.16,1,.3,1); --side:250px;
+  --sp:18px; --sp2:28px;
+  --font:'Jost',system-ui,-apple-system,sans-serif;
+  --font-d:'Jost',system-ui,sans-serif;
+  --font-m:'Jost',ui-monospace,Menlo,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--txt);min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;letter-spacing:.1px}
 .aurora{position:fixed;inset:0;z-index:-1;background:
-  radial-gradient(900px 520px at 12% -12%, rgba(201,162,75,.16), transparent 58%),
-  radial-gradient(760px 520px at 102% -4%, rgba(180,145,60,.08), transparent 55%)}
-h2.pt,.denied h2,.wordmark,.sbrand,.cdnum,.bhead b,.mbody h3,.sbig h3,.snum,.wtitle,.ititle{font-family:var(--font-d);letter-spacing:-.2px}
-#shLink,#aOtp,#sOtpI,#apiU{font-family:var(--font-m)}
-.pill,.snav,.uname{font-family:var(--font)}
+  radial-gradient(900px 540px at 14% -16%, rgba(198,165,107,.09), transparent 60%),
+  radial-gradient(700px 500px at 104% -6%, rgba(198,165,107,.05), transparent 58%)}
+h2.pt,.denied h2,.wordmark,.sbrand,.cdnum,.bhead b,.mbody h3,.sbig h3,.snum,.wtitle,.ititle{font-family:var(--font);font-weight:700;letter-spacing:-.2px}
+#shLink,#aOtp,#sOtpI,#apiU{font-family:var(--font-m);letter-spacing:1px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes ci{from{transform:translateY(16px) scale(.98);opacity:0}}
 @keyframes ti{from{transform:translateX(30px);opacity:0}}
@@ -86,7 +87,19 @@ label.fld{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px;text
 #toasts{position:fixed;top:16px;right:16px;left:16px;z-index:9500;display:flex;flex-direction:column;gap:10px;align-items:flex-end;pointer-events:none}
 .toast{pointer-events:auto;background:var(--surface2);border:1px solid var(--line2);border-left:4px solid var(--accent);border-radius:12px;padding:12px 16px;font-size:14px;max-width:360px;box-shadow:var(--shadow);animation:ti .25s var(--ease)}
 .toast.ok{border-left-color:var(--ok)} .toast.err{border-left-color:var(--err)}
-#modalWrap{position:fixed;inset:0;background:rgba(4,5,10,.74);z-index:9998;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 14px;backdrop-filter:blur(4px)}
+#modalWrap{position:fixed;inset:0;background:rgba(4,5,10,.78);z-index:9998;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:24px 14px;backdrop-filter:blur(6px)}
+.brandwave{background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent-ink),var(--accent2),var(--accent));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:wave 6s ease-in-out infinite;font-weight:700}
+@keyframes wave{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.createrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-start;margin:4px 0 28px}
+.fcard-acts{position:absolute;top:8px;right:8px;display:flex;gap:5px;opacity:0;transition:opacity .15s}
+.wcard.folder:hover .fcard-acts{opacity:1}
+.card.empty{padding:46px 24px;text-align:center;color:var(--muted);margin-top:10px}
+.card.empty .em-ic{width:64px;height:64px;margin:0 auto 4px;border-radius:16px;background:rgba(198,165,107,.1);border:1px solid rgba(198,165,107,.2);color:var(--accent);display:flex;align-items:center;justify-content:center}.card.empty .em-ic svg{width:30px;height:30px}
+.card.empty .et{font-weight:700;font-size:17px;color:var(--txt);margin-top:10px;font-family:var(--font-d)}
+.card.empty .es{font-size:13.5px;margin-top:6px}
+.formwrap{max-width:620px;margin:0 auto}
+.formcard{padding:26px;text-align:left}
+.wcard.folder{text-align:center}
 #modalWrap.on{display:flex}
 .modal{width:100%;max-width:640px;margin:auto;max-height:92dvh;overflow:auto;animation:ci .3s var(--ease)}
 .modal.wide{max-width:1000px}
@@ -110,62 +123,75 @@ label.fld{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px;text
 .tab{flex:1;padding:10px;text-align:center;border-radius:9px;cursor:pointer;font-weight:600;font-size:14px;color:var(--muted);transition:all .2s var(--ease)}
 .tab.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1400}
 
-/* ===== APP SHELL (sidebar) ===== */
+/* ===== APP SHELL — sidebar + main ===== */
 #appView{display:none;min-height:100dvh}
 #appView.ready{display:flex}
-#sideOverlay{display:none}
-.sidebar{width:var(--side);flex-shrink:0;position:sticky;top:0;height:100dvh;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 14px;z-index:60}
-.sbrand{padding:6px 10px 18px;font-size:20px}
-.snav{display:flex;flex-direction:column;gap:4px}
-.pill{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px 14px;border-radius:12px;border:none;background:transparent;color:var(--muted);font-weight:600;font-size:14px;cursor:pointer;transition:all .18s var(--ease);position:relative}
-.pill .ni{font-size:17px;width:22px;text-align:center;flex-shrink:0}
-.pill:hover{background:var(--surface);color:var(--txt)}
-.pill.on{background:linear-gradient(100deg,rgba(201,162,75,.22),rgba(201,162,75,.05));color:#f0d9a0}
-.pill.on::before{content:"";position:absolute;left:3px;top:10px;bottom:10px;width:3px;border-radius:3px;background:linear-gradient(var(--accent),var(--accent2))}
-.suser{margin-top:auto;border-top:1px solid var(--line);padding-top:14px}
-.ucard{display:flex;align-items:center;gap:11px;padding:4px 6px}
-.uav{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a1400;flex-shrink:0}
-.uname{font-weight:600;font-size:14px;line-height:1.2}
-.urole{font-size:11.5px;color:var(--muted);margin-top:1px}
-.main{flex:1;min-width:0;display:flex;flex-direction:column}
-.apptop{display:none;align-items:center;gap:12px;padding:12px 16px;position:sticky;top:0;background:rgba(11,13,22,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);z-index:55}
-.menuBtn{width:40px;height:40px;border-radius:11px;border:1px solid var(--line2);background:transparent;color:var(--txt);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sidebar{width:var(--side);flex-shrink:0;position:sticky;top:0;height:100dvh;background:var(--sidebar);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 16px;z-index:60}
+.sbrand{display:flex;align-items:center;gap:11px;padding:6px 10px 22px;font-size:19px;font-weight:700;letter-spacing:.3px}
+.sidenav{display:flex;flex-direction:column;gap:4px}
+.sideuser{margin-top:auto;border-top:1px solid var(--line);padding-top:16px}
+.su-card{display:flex;align-items:center;gap:11px;padding:4px 6px;margin-bottom:12px}
+.signout{width:100%}
+.appmain{flex:1;min-width:0;display:flex;flex-direction:column}
+.apptop{display:flex;align-items:center;gap:14px;padding:18px 32px;position:sticky;top:0;background:rgba(9,9,9,.78);backdrop-filter:blur(18px) saturate(1.2);border-bottom:1px solid var(--line);z-index:55}
+.mbrand{display:none;font-size:18px;font-weight:700}
+.apptitle{font-size:18px;font-weight:600;letter-spacing:.2px}
 .spacer{flex:1;min-width:8px}
-.wrap{width:100%;max-width:1400px;margin:0 auto;padding:28px 28px 120px}
+.uchip{display:flex;align-items:center;gap:10px;cursor:pointer}
+.uav{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#141008;flex-shrink:0;box-shadow:0 4px 14px rgba(198,165,107,.3)}
+.uinfo{line-height:1.2;min-width:0}
+.uname{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.urole{font-size:11px;color:var(--muted)}
+.wrap{width:100%;max-width:1160px;margin:0 auto;padding:34px 32px 60px}
 .page{display:none} .page.on{display:block;animation:fadeUp .35s var(--ease)}
-h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
-.psub{color:var(--muted);font-size:14px;margin-bottom:22px}
+/* nav buttons (sidebar = row; bottom = column) */
+.navbtn{display:flex;align-items:center;gap:13px;width:100%;text-align:left;padding:12px 14px;border-radius:11px;border:none;background:transparent;color:var(--muted);font-family:var(--font);font-weight:500;font-size:14.5px;cursor:pointer;transition:all .18s var(--ease);position:relative}
+.navbtn .ni{width:20px;height:20px;flex-shrink:0;display:flex}
+.navbtn .ni svg{width:20px;height:20px}
+.navbtn:hover{background:var(--surface);color:var(--txt)}
+.navbtn.on{background:linear-gradient(100deg,rgba(198,165,107,.16),rgba(198,165,107,.04));color:var(--accent-ink)}
+.navbtn.on::before{content:"";position:absolute;left:0;top:11px;bottom:11px;width:3px;border-radius:3px;background:var(--accent)}
+.bottomnav{display:none}
+h2.pt{font-size:26px;font-weight:700;margin-bottom:6px;letter-spacing:.3px}
+.psub{color:var(--muted);font-size:14px;margin-bottom:26px;line-height:1.55}
+.hero{margin:4px 0 30px}
+.hero h2.pt{font-size:30px;margin:8px 0 8px}
+.hero .psub{margin-bottom:0;max-width:540px}
+.eyebrow{display:inline-block;font-size:10.5px;letter-spacing:2.4px;text-transform:uppercase;color:var(--accent-ink);font-weight:600}
+.eyebrow::before{content:"";display:inline-block;width:22px;height:1px;background:var(--accent);vertical-align:middle;margin-right:9px;opacity:.7}
 
 /* stats */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:14px;margin-bottom:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin:0 0 30px}
 .stat{position:relative;background:linear-gradient(160deg,var(--surface2),var(--surface));border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;overflow:hidden;transition:transform .2s var(--ease),border-color .2s;animation:fadeUp .4s var(--ease) backwards}
 .stat:hover{transform:translateY(-4px);border-color:var(--line2)}
-.stat .si{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;background:rgba(201,162,75,.16);margin-bottom:14px}
+.stat .si{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;background:rgba(201,162,75,.16);margin-bottom:14px;color:var(--accent-ink)}
+.stat .si.svg svg{width:21px;height:21px}
 .snum{font-size:32px;font-weight:700;line-height:1}
 .slbl{color:var(--muted);font-size:12.5px;margin-top:5px}
 .stat::after{content:"";position:absolute;left:0;right:30%;bottom:0;height:3px;background:linear-gradient(90deg,var(--accent),transparent)}
 
 /* week sections */
 .wsec{margin-top:32px;animation:fadeUp .4s var(--ease)}
-.whead{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.whead{display:flex;align-items:center;gap:12px;margin:0 0 18px}
 .wtitle{font-size:18px;font-weight:700}
 .wpill{font-size:11.5px;color:var(--accent-ink);background:rgba(201,162,75,.15);padding:3px 11px;border-radius:20px;font-weight:600}
 .wline{flex:1;height:1px;background:var(--line)}
-.psub2{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin-top:24px;margin-bottom:2px;font-weight:600}
-.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:12px 0 6px}
+.psub2{color:var(--faint);font-size:11.5px;text-transform:uppercase;letter-spacing:1px;margin:26px 0 14px;font-weight:600}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:16px;margin:0 0 10px}
 .wcard{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;transition:transform .2s var(--ease),border-color .2s,background .2s;animation:fadeUp .35s var(--ease) backwards}
 .cardadd{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:9px;border:1px solid var(--line2);background:var(--bg2);color:var(--accent-ink);font-size:17px;font-weight:700;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;z-index:2}
 .cardadd:hover{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1400;border-color:transparent}
-.wcard:hover{transform:translateY(-3px);border-color:var(--line2)}
+.wcard:hover{transform:translateY(-3px);border-color:var(--line2);box-shadow:0 14px 30px rgba(0,0,0,.4)}
 .wcard.on{border-color:var(--accent);background:linear-gradient(160deg,rgba(201,162,75,.2),var(--surface))}
-.wic{width:40px;height:40px;border-radius:12px;background:rgba(201,162,75,.15);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:10px}
+.wic{width:44px;height:44px;border-radius:12px;background:rgba(198,165,107,.12);border:1px solid rgba(198,165,107,.2);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:12px}.wic svg{width:22px;height:22px}
 .wc-t{font-weight:700;font-size:15px}
 .wc-n{color:var(--muted);font-size:12px;margin-top:2px}
-.recent-sec{margin-top:32px}
+.recent-sec{margin-top:40px}
 .reclist{padding:6px}
 .recrow{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;cursor:pointer;transition:background .15s}
 .recrow:hover{background:rgba(255,255,255,.04)}
-.rec-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.rec-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:var(--accent-ink)}
+.rec-ic svg{width:18px;height:18px}
 .rec-main{flex:1;min-width:0}
 .rec-t{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rec-m{color:var(--muted);font-size:11.5px;margin-top:1px}
@@ -178,7 +204,8 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 .ithumb{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1d2c,#0d0f18);overflow:hidden}
 .ithumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s var(--ease)}
 .icard:hover .ithumb img{transform:scale(1.07)}
-.ithumb .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:46px;opacity:.3}
+.ithumb .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:46px;opacity:.3;color:var(--accent)}
+.ithumb .ph svg{width:46px;height:46px;opacity:.9}
 .tov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,8,14,0) 45%,rgba(7,8,14,.7));pointer-events:none}
 .tchips{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:6px;pointer-events:none}
 .playb{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.88);width:54px;height:54px;border-radius:50%;background:rgba(201,162,75,.95);display:flex;align-items:center;justify-content:center;font-size:19px;color:#1a1400;opacity:0;transition:all .25s var(--ease);box-shadow:0 10px 28px rgba(201,162,75,.55);pointer-events:none;padding-left:3px}
@@ -201,9 +228,11 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 .vframe{width:100%;height:68dvh;border:none;border-radius:14px;background:#000}
 .vwrap{position:relative;border-radius:14px;overflow:hidden}
 /* search bar */
-.searchbar{position:relative;margin:22px 0 4px}
+.searchbar{position:relative;margin:4px 0 26px;max-width:560px}
 .searchbar .inp{padding-left:42px;padding-right:40px;background:var(--surface)}
 .si2{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.7;pointer-events:none}
+.si2.svg{display:flex;color:var(--accent-ink);opacity:.8}
+.si2.svg svg{width:17px;height:17px}
 .searchx{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:6px 10px;border-radius:8px}
 .searchx:hover{color:var(--txt)}
 /* view-count badge on card */
@@ -237,10 +266,10 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 .denied .em{font-size:54px}
 
 /* bot */
-#botFab{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:17px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#1a1400;font-size:24px;cursor:pointer;z-index:200;box-shadow:0 14px 32px rgba(201,162,75,.5);transition:transform .2s var(--ease)}
+#botFab{position:fixed;bottom:92px;right:20px;width:58px;height:58px;border-radius:17px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#1a1400;font-size:24px;cursor:pointer;z-index:200;box-shadow:0 14px 32px rgba(201,162,75,.5);transition:transform .2s var(--ease)}
 #botFab:hover{transform:translateY(-3px) scale(1.05)}
 #botFab:active{transform:scale(.95)}
-#botPanel{position:fixed;bottom:92px;right:24px;width:372px;max-width:calc(100vw - 28px);height:530px;max-height:calc(100dvh - 120px);z-index:200;display:none;flex-direction:column;overflow:hidden;transform-origin:bottom right;animation:ci .25s var(--ease)}
+#botPanel{position:fixed;bottom:160px;right:20px;width:372px;max-width:calc(100vw - 28px);height:530px;max-height:calc(100dvh - 120px);z-index:200;display:none;flex-direction:column;overflow:hidden;transform-origin:bottom right;animation:ci .25s var(--ease)}
 #botPanel.on{display:flex}
 .bhead{display:flex;align-items:center;gap:11px;padding:15px 17px;border-bottom:1px solid var(--line)}
 .bmsgs{flex:1;overflow:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
@@ -263,32 +292,41 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 .thumbprev{width:100%;max-height:150px;object-fit:cover;border-radius:12px;margin-top:10px;border:1px solid var(--line);display:none}
 
 /* ===== responsive ===== */
+/* tablet/mobile: hide sidebar, show bottom nav */
 @media(max-width:900px){
-  .sidebar{position:fixed;left:0;top:0;transform:translateX(-100%);transition:transform .28s var(--ease);box-shadow:var(--shadow-lg)}
-  #appView.side-open .sidebar{transform:none}
-  #sideOverlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s;z-index:59}
-  #appView.side-open #sideOverlay{opacity:1;pointer-events:auto}
-  .apptop{display:flex}
-  .wrap{padding:22px 18px 110px}
+  .sidebar{display:none}
+  .mbrand{display:flex}
+  .apptitle{display:none}
+  .wrap{padding:24px 18px calc(96px + env(safe-area-inset-bottom))}
+  .bottomnav{display:flex;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));z-index:120;gap:4px;background:rgba(20,20,20,.94);backdrop-filter:blur(22px) saturate(1.2);border:1px solid var(--line2);border-radius:20px;padding:7px;box-shadow:0 18px 50px rgba(0,0,0,.65)}
+  .bottomnav .navbtn{flex-direction:column;align-items:center;gap:3px;width:auto;min-width:72px;padding:8px 10px;font-size:11px;font-weight:500;border-radius:14px}
+  .bottomnav .navbtn::before{display:none}
+  .bottomnav .navbtn.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#141008}
+  #botFab{bottom:calc(88px + env(safe-area-inset-bottom))}
 }
 @media(max-width:820px){ .authcard{grid-template-columns:1fr} .abrand{display:none} .aform{padding:34px 26px} }
 @media(max-width:560px){
-  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:13px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:14px}
   h2.pt{font-size:22px}
-  .wrap{padding:18px 15px 110px}
-  .mbody{padding:16px}
-  .mhead{padding:15px 17px}
-  .vframe{height:56dvh}
-  .ibody{padding:12px 13px}
+  .apptop{padding:14px 18px}
+  .wrap{padding:20px 16px calc(96px + env(safe-area-inset-bottom))}
+  .stats{grid-template-columns:1fr 1fr;gap:12px}
+  .mbody{padding:18px}
+  .mhead{padding:16px 18px}
+  .modal{max-width:100%}
+  .vframe{height:52dvh}
+  .ibody{padding:13px}
   .ititle{font-size:14.5px}
-  #botPanel{right:14px;left:14px;width:auto}
-  #botFab{bottom:18px;right:18px}
+  .createrow{gap:10px}
+  .createrow .btn{flex:1;min-width:0}
+  #botPanel{right:12px;left:12px;width:auto;bottom:150px}
+  #botFab{right:16px}
   .playb{width:46px;height:46px;font-size:17px}
   .blab{display:none}
   .tbl .btn.sm{padding:9px 11px;min-width:40px;justify-content:center}
   .tbl td:last-child{white-space:normal}
 }
-@media(max-width:380px){ .grid{grid-template-columns:1fr 1fr} }
+@media(max-width:380px){ .bottomnav .navbtn{min-width:60px} }
 @media(prefers-reduced-motion:reduce){ *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important} }
 </style>
 </head>
@@ -324,16 +362,17 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 
 <!-- ===== APP ===== -->
 <section id="appView">
-  <div id="sideOverlay" onclick="closeSide()"></div>
   <aside class="sidebar" id="sidebar">
-    <div class="sbrand"><span class="dot">Au</span> Aurevia</div>
-    <nav class="snav" id="nav"></nav>
-    <div class="suser" id="uchip"></div>
+    <div class="sbrand"><span class="dot">Au</span><span class="sbname">Aurevia</span></div>
+    <nav class="sidenav" id="sidenav"></nav>
+    <div class="sideuser" id="sideuser"></div>
   </aside>
-  <div class="main">
+  <div class="appmain">
     <header class="apptop">
-      <button class="menuBtn" onclick="toggleSide()">☰</button>
-      <div class="wordmark" style="font-size:18px"><span class="dot">Au</span> Aurevia</div>
+      <div class="wordmark mbrand"><span class="dot">Au</span><span class="sbname">Aurevia</span></div>
+      <div class="apptitle" id="apptitle"></div>
+      <div class="spacer"></div>
+      <div class="uchip" id="uchip"></div>
     </header>
     <div class="banner" id="apiBanner"></div>
     <div class="wrap">
@@ -344,6 +383,7 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
     </div>
     <div class="footer" id="footer"></div>
   </div>
+  <nav class="bottomnav" id="bottomnav"></nav>
   <button id="botFab" onclick="toggleBot()">💬</button>
   <div id="botPanel" class="card">
     <div class="bhead"><div class="uav">Au</div><div><b>Aurevia Assistant</b><div style="font-size:11px;color:var(--ok)">● online</div></div></div>
@@ -355,17 +395,17 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 
 <script>
 /* ============ CONFIG ============ */
-const API_DEFAULT = 'https://script.google.com/macros/s/AKfycbzf7HTaqLlvvSFWZH3LmWEGTl20gG4YAJ9E5QJxV9qgJQFbkD1dQMeS4FM0AGAlrFQ/exec';
+const API_DEFAULT = 'https://script.google.com/macros/s/AKfycbxZigd9P1WacwPDJN8hOQcg4dLn8XeIQzZoPbiYQwz0rfe8daVEzwnS2-cO_qkbF20xCA/exec';
 let API = localStorage.getItem('aur_api') || API_DEFAULT;
 const BRAND = 'Aurevia';
-const APP_VERSION = '2.3.5';
+const APP_VERSION = '3.1.0';
 function apiOk(u){ return /\/macros\/(s|.*\/s)\/[^/]+\/exec$/.test(String(u||'')); }
 
 /* ============ STATE ============ */
 let SESSION = null;
 let ITEMS = [];
 let FOLDERS = [];
-let ADD_PRECAT = '';
+let ADD_PREFOLDER = '';
 let CD_TIMER = null, SHARE_ID = null, BOT_BRAIN = {taught:[], stats:{}};
 
 /* ============ HELPERS ============ */
@@ -524,35 +564,60 @@ async function doReset(){
 async function resendCode(){ const r=await api({action:'resendOtp', email:authEmail}); toast(r.msg||'Sent', r.ok?'ok':'err'); }
 
 /* ============ APP SHELL ============ */
-function toggleSide(){ $('appView').classList.toggle('side-open'); }
-function closeSide(){ $('appView').classList.remove('side-open'); }
-const NAV=[['library','🏠','Dashboard'],['shares','🔗','Shares'],['users','👥','Users'],['newfolder','➕','New Folder']];
+const SVG={
+  library:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  shares:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.1M8.3 13.2l7.4 4.1"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.6-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><path d="M16 5.2a3 3 0 010 5.6M17.5 14.6c2 .6 3.5 2.4 3.5 4.9"/></svg>',
+  add:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 5v14M5 12h14"/></svg>',
+  folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7.5A1.5 1.5 0 014.5 6h4l2 2.2h7A1.5 1.5 0 0119 9.7v7.8A1.5 1.5 0 0117.5 19h-13A1.5 1.5 0 013 17.5V7.5z"/></svg>',
+  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg>',
+  video:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3V9z" fill="currentColor" stroke="none"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg>',
+  pdf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2.5h8L19 7v13.5A1.5 1.5 0 0117.5 22h-11A1.5 1.5 0 015 20.5V4A1.5 1.5 0 016.5 2.5z"/><path d="M14 2.5V7h4.5"/></svg>',
+  note:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  yt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="6" width="19" height="12" rx="3"/><path d="M10 9.3l4.5 2.7L10 14.7V9.3z" fill="currentColor" stroke="none"/></svg>'
+};
+const TYPE_SVG={video:SVG.video,youtube:SVG.yt,pdf:SVG.pdf,note:SVG.note,folder:SVG.folder};
+const NAV=[['library','Overview'],['shares','Shares'],['users','Users'],['add','Add']];
+const PTITLE={library:'Overview',shares:'Shares',users:'Users',add:'Add Content'};
+function navItemsHTML(kind){
+  const admin=SESSION.isAdmin;
+  return NAV.filter(n=>admin||['library','shares'].includes(n[0])).map((n,i)=>
+    '<button class="navbtn'+(i===0?' on':'')+'" data-pg="'+n[0]+'" onclick="go(\''+n[0]+'\')"><span class="ni">'+SVG[n[0]]+'</span><span class="nl">'+n[1]+'</span></button>').join('');
+}
 function showApp(){
   $('authView').style.display='none'; $('shareView').style.display='none'; $('appView').classList.add('ready');
-  const admin=SESSION.isAdmin;
-  $('nav').innerHTML = NAV.filter(n=>admin||['library','shares'].includes(n[0])).map((n,i)=>{
-    const act = n[0]==='newfolder' ? 'createFolder()' : 'go(\''+n[0]+'\')';
-    return '<button class="pill'+(i===0?' on':'')+'" data-pg="'+n[0]+'" onclick="'+act+'"><span class="ni">'+n[1]+'</span><span>'+n[2]+'</span></button>';
-  }).join('');
-  $('uchip').innerHTML='<div class="ucard"><div class="uav">'+initials(SESSION.name)+'</div><div style="min-width:0"><div class="uname">'+esc(SESSION.name)+'</div><div class="urole">'+esc(SESSION.role)+'</div></div></div><button class="btn ghost sm" style="width:100%;margin-top:11px" onclick="signOut()">Sign out 👋</button>';
-  $('footer').textContent=BRAND+' · Secure sharing · v'+APP_VERSION;
+  $('sidenav').innerHTML = navItemsHTML('side');
+  $('bottomnav').innerHTML = navItemsHTML('bottom');
+  const uav='<div class="uav">'+initials(SESSION.name)+'</div>';
+  $('sideuser').innerHTML='<div class="su-card">'+uav+'<div class="uinfo"><div class="uname">'+esc(SESSION.name)+'</div><div class="urole">'+esc(SESSION.role)+'</div></div></div><button class="btn ghost sm signout" onclick="signOut()">Sign out</button>';
+  $('uchip').innerHTML=uav;
+  $('uchip').onclick=()=>toggleUserMenu();
+  $('footer').textContent=BRAND+' · Private Vault · v'+APP_VERSION;
   go('library');
+}
+function toggleUserMenu(){
+  openModal('<div class="mhead"><b>Account</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody"><div class="su-card" style="margin-bottom:16px"><div class="uav">'+initials(SESSION.name)+'</div><div class="uinfo"><div class="uname">'+esc(SESSION.name)+'</div><div class="urole">'+esc(SESSION.role)+' · '+esc(SESSION.email||'')+'</div></div></div><button class="btn" style="width:100%" onclick="closeModal();signOut()">Sign out</button></div>');
 }
 function signOut(){ localStorage.removeItem('aur_session'); SESSION=null; location.href=location.pathname; }
 function go(pg){
-  document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('on',p.dataset.pg===pg));
+  document.querySelectorAll('.navbtn').forEach(p=>p.classList.toggle('on',p.dataset.pg===pg));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   $('pg-'+pg).classList.add('on');
-  closeSide();
+  const t=$('apptitle'); if(t) t.textContent=PTITLE[pg]||'';
   if(pg==='library') loadLibrary();
   if(pg==='shares') loadShares();
   if(pg==='users') loadUsers();
   if(pg==='add') renderAdd();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 /* ============ DASHBOARD / LIBRARY ============ */
 const ICON={video:'🎬',youtube:'▶️',pdf:'📄',note:'📝',folder:'📁'};
+const FOLDER_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7.5A1.5 1.5 0 014.5 6h4l2 2.2h7A1.5 1.5 0 0119 9.7v7.8A1.5 1.5 0 0117.5 19h-13A1.5 1.5 0 013 17.5V7.5z"/></svg>';
 function statTile(icon,n,l){ return '<div class="stat"><div class="si">'+icon+'</div><div class="snum">'+n+'</div><div class="slbl">'+l+'</div></div>'; }
+function statTileSvg(svg,n,l){ return '<div class="stat"><div class="si svg">'+svg+'</div><div class="snum">'+n+'</div><div class="slbl">'+l+'</div></div>'; }
 async function loadLibrary(){
   if(ITEMS.length) renderLibrary();   // instant from cache, then refresh silently
   else $('pg-library').innerHTML='<h2 class="pt">Dashboard</h2><p class="psub">Loading…</p>';
@@ -560,29 +625,37 @@ async function loadLibrary(){
   if(r.ok){ ITEMS=r.items||[]; FOLDERS=r.folders||[]; renderLibrary(); }
   else if(!ITEMS.length){ $('pg-library').innerHTML='<h2 class="pt">Dashboard</h2><p class="psub" style="color:var(--err)">'+esc(r.msg||'Failed')+'</p>'; }
 }
-let CUR_CAT = null;    // null = show category folders; '__all' = all categories; else category name
-let CUR_WEEK = null;   // null = show week folders in category; 'all' = every week; else week number
-function catName(it){ return String(it.category||'').trim() || 'Uncategorized'; }
-function selectCat(c){ CUR_CAT=c; CUR_WEEK=null; renderLibrary(); window.scrollTo({top:0,behavior:'smooth'}); }
-function selectWeek(w){ CUR_WEEK = (w==='all') ? 'all' : Number(w); renderLibrary(); window.scrollTo({top:0,behavior:'smooth'}); }
-function navRoot(){ CUR_CAT=null; CUR_WEEK=null; renderLibrary(); }
-function navCat(){ CUR_WEEK=null; renderLibrary(); }
-function catItems(c){ return (c==='__all') ? ITEMS.slice() : ITEMS.filter(i=>catName(i)===c); }
-function createFolder(){
-  openModal('<div class="mhead"><b>➕ New folder</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody"><label class="fld">Folder / Category name</label><input class="inp" id="nfName" placeholder="e.g. Course A, Batch 2025…" onkeydown="if(event.key===\'Enter\')saveFolder()"><button class="btn" style="margin-top:16px;width:100%" onclick="saveFolder()">Create folder</button></div>');
-  setTimeout(()=>{ const i=$('nfName'); if(i) i.focus(); },50);
+let CUR_FOLDER = '';   // '' = root
+function folderById(id){ for(const f of FOLDERS) if(f.id===id) return f; return null; }
+function childFolders(pid){ return FOLDERS.filter(f=>String(f.parent||'')===String(pid)).sort((a,b)=>a.name.localeCompare(b.name)); }
+function folderItems(pid){ return ITEMS.filter(i=>String(i.folder_id||'')===String(pid)); }
+function folderPath(id){ const out=[]; let f=folderById(id); let guard=0; while(f && guard++<30){ out.unshift(f); f=folderById(f.parent); } return out; }
+function descItemCount(pid){ let n=folderItems(pid).length; childFolders(pid).forEach(c=>{ n+=descItemCount(c.id); }); return n; }
+function selectFolder(id){ CUR_FOLDER=id; renderLibrary(); window.scrollTo({top:0,behavior:'smooth'}); }
+function createFolder(parent){
+  const p = (typeof parent==='string') ? parent : CUR_FOLDER;
+  const here = p ? ' inside <b style="color:var(--accent-ink)">'+esc((folderById(p)||{}).name||'')+'</b>' : '';
+  openModal('<div class="mhead"><b>➕ New Folder</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody"><p style="color:var(--muted);font-size:13px;margin-bottom:4px">Creating a folder'+here+'.</p><label class="fld">Folder name</label><input class="inp" id="nfName" placeholder="Folder name" onkeydown="if(event.key===\'Enter\')saveFolder(\''+p+'\')"><button class="btn" style="margin-top:18px;width:100%" onclick="saveFolder(\''+p+'\')">Create Folder</button></div>');
+  setTimeout(()=>{ const i=$('nfName'); if(i) i.focus(); },60);
 }
-async function saveFolder(){
+async function saveFolder(parent){
   const name=($('nfName').value||'').trim(); if(!name){ toast('Enter a name','err'); return; }
-  const r=await api({action:'createFolder', name});
-  if(!r.ok){ toast(r.msg||'Failed — is the backend updated to v2.3+? (deploy Code.gs)','err'); return; }
-  // merge folder locally so it shows even if backend did not echo it
-  FOLDERS = r.folders && r.folders.length ? r.folders : [...new Set([...FOLDERS, r.name||name])];
+  const r=await api({action:'createFolder', name, parent:parent||''});
+  if(!r.ok){ toast(r.msg||'Failed — deploy the latest Code.gs (v3.0)','err'); return; }
+  FOLDERS = r.folders && r.folders.length ? r.folders : FOLDERS;
+  if(r.id && !folderById(r.id)) FOLDERS.push({id:r.id,name:r.name,parent:parent||''});
   toast(r.msg||'Folder created ✅','ok'); closeModal();
-  CUR_CAT=null; CUR_WEEK=null; renderLibrary();   // stay on dashboard so the new folder card is visible
-  window.scrollTo({top:0,behavior:'smooth'});
+  renderLibrary(); window.scrollTo({top:0,behavior:'smooth'});
 }
-function addToFolder(c){ ADD_PRECAT=c; go('add'); }
+function addContent(folderId){ ADD_PREFOLDER=(typeof folderId==='string')?folderId:CUR_FOLDER; go('add'); }
+function delFolder(id){
+  const f=folderById(id); if(!f) return;
+  confirmModal('Delete folder?','“'+f.name+'” — its sub-folders and items move up one level. Nothing is lost.', async()=>{
+    const r=await api({action:'deleteFolder', id});
+    if(r.ok){ FOLDERS=r.folders||FOLDERS; toast('Folder deleted','ok'); if(CUR_FOLDER===id) CUR_FOLDER=f.parent||''; loadLibrary(); }
+    else toast(r.msg||'Failed','err');
+  }, true);
+}
 function ago(ts){
   if(!ts) return ''; const s=Math.floor((Date.now()-ts)/1000);
   if(s<60) return 'just now';
@@ -591,92 +664,67 @@ function ago(ts){
   const d=Math.floor(h/24); if(d<30) return d+'d ago';
   const mo=Math.floor(d/30); return mo+'mo ago';
 }
-function wcard(val,icon,label,n,active){
-  return '<div class="wcard'+(active?' on':'')+'" onclick="selectWeek(\''+val+'\')"><div class="wic">'+icon+'</div><div class="wc-t">'+esc(label)+'</div><div class="wc-n">'+n+' item'+(n!==1?'s':'')+'</div></div>';
-}
 function recRow(it){
-  return '<div class="recrow" onclick="openItem(\''+it.id+'\')"><div class="rec-ic b-'+it.type+'">'+ICON[it.type]+'</div>'+
-    '<div class="rec-main"><div class="rec-t">'+esc(it.title)+'</div><div class="rec-m">'+(it.week>0?'Week '+it.week:'Unsorted')+' · '+esc(it.type)+'</div></div>'+
+  const fo=folderById(it.folder_id);
+  return '<div class="recrow" onclick="openItem(\''+it.id+'\')"><div class="rec-ic b-'+it.type+'">'+(TYPE_SVG[it.type]||ICON[it.type])+'</div>'+
+    '<div class="rec-main"><div class="rec-t">'+esc(it.title)+'</div><div class="rec-m">'+(fo?esc(fo.name):'Root')+' · '+esc(it.type)+'</div></div>'+
     '<div class="rec-time">'+ago(it._ts)+'</div></div>';
+}
+function folderCard(f,i){
+  const subN=childFolders(f.id).length, itN=descItemCount(f.id);
+  const admin=SESSION.isAdmin;
+  const actions=admin?'<div class="fcard-acts" onclick="event.stopPropagation()"><button class="cardadd" title="Add content here" onclick="addContent(\''+f.id+'\')">＋</button><button class="cardadd" title="New subfolder" onclick="createFolder(\''+f.id+'\')">📁</button><button class="cardadd danger" title="Delete folder" onclick="delFolder(\''+f.id+'\')">🗑</button></div>':'';
+  return '<div class="wcard folder" style="animation-delay:'+Math.min(i*30,300)+'ms" onclick="selectFolder(\''+f.id+'\')">'+actions+
+    '<div class="wic">'+FOLDER_SVG+'</div><div class="wc-t">'+esc(f.name)+'</div><div class="wc-n">'+(subN?subN+' folder'+(subN!==1?'s':'')+' · ':'')+itN+' item'+(itN!==1?'s':'')+'</div></div>';
 }
 let LIB_Q='';
 function renderLibrary(){
-  const vids=ITEMS.filter(i=>i.type==='video').length, docs=ITEMS.filter(i=>i.type==='pdf'||i.type==='note').length;
+  const vids=ITEMS.filter(i=>i.type==='video'||i.type==='youtube').length;
+  const docs=ITEMS.filter(i=>i.type==='pdf'||i.type==='note').length;
   const totalViews=ITEMS.reduce((a,i)=>a+(i.views||0),0);
-  const weeks=[...new Set(ITEMS.map(i=>i.week||0))];
-  const nWeeks=weeks.filter(w=>w>0).length;
-  const nCats=new Set(ITEMS.map(catName)).size;
-  let html='<h2 class="pt">Dashboard</h2><p class="psub">Your private vault — search or browse by category.</p>'+
-    '<div class="stats">'+statTile('🗃️',nCats,'Categories')+statTile('🗓️',nWeeks,'Weeks')+statTile('🎬',vids,'Videos')+statTile('👁',totalViews,'Total views')+'</div>';
-  if(!ITEMS.length){
-    // no items yet — still show folders + Create Folder so admin can set up
-    html+='<div style="margin-top:14px">'+buildBrowse()+'</div>';
-    if(CUR_CAT===null) html+='<div class="card" style="padding:28px;text-align:center;color:var(--muted);margin-top:14px">No content yet.'+(SESSION.isAdmin?' Create a folder, open it, then “Add Files / Videos”.':'')+'</div>';
-    $('pg-library').innerHTML=html; return;
-  }
-  // search bar
-  html+='<div class="searchbar"><span class="si2">🔍</span><input id="libSearch" class="inp" placeholder="Search by title, tag or week…" value="'+esc(LIB_Q)+'" oninput="doLibSearch(this.value)"><button class="searchx" id="libSearchX" onclick="clearLibSearch()" style="'+(LIB_Q?'':'display:none')+'">✕</button></div>';
+  let html='<div class="hero"><span class="eyebrow">Your private digital space</span><h2 class="pt brandwave">Your Private Collection.</h2><p class="psub">Browse your folders or search across everything you have gathered here.</p></div>'+
+    '<div class="stats">'+statTileSvg(SVG.folder,FOLDERS.length,'Folders')+statTileSvg(SVG.box,ITEMS.length,'Items')+statTileSvg(SVG.video,vids,'Videos')+statTileSvg(SVG.eye,totalViews,'Views')+'</div>';
+  // search bar (searches all items)
+  html+='<div class="searchbar"><span class="si2 svg">'+SVG.search+'</span><input id="libSearch" class="inp" placeholder="Search everything by title, tag or type…" value="'+esc(LIB_Q)+'" oninput="doLibSearch(this.value)"><button class="searchx" id="libSearchX" onclick="clearLibSearch()" style="'+(LIB_Q?'':'display:none')+'">✕</button></div>';
   html+='<div id="searchResults"'+(LIB_Q?'':' class="hide"')+'></div>';
   html+='<div id="libBrowse"'+(LIB_Q?' class="hide"':'')+'>'+buildBrowse()+'</div>';
-  // recent uploads — always latest 5
-  const recent=ITEMS.slice().sort((a,b)=>(b._ts||0)-(a._ts||0)).slice(0,5);
-  html+='<div class="recent-sec"><div class="whead"><span class="wtitle">Recent uploads</span><span class="wpill">last 5</span><span class="wline"></span></div>'+
-    '<div class="card reclist">'+(recent.length?recent.map(recRow).join(''):'<div style="color:var(--muted);padding:16px">No uploads yet.</div>')+'</div></div>';
+  if(CUR_FOLDER==='' && !LIB_Q){
+    const recent=ITEMS.slice().sort((a,b)=>(b._ts||0)-(a._ts||0)).slice(0,5);
+    if(recent.length) html+='<div class="recent-sec"><div class="whead"><span class="wtitle">Recent uploads</span><span class="wpill">last 5</span><span class="wline"></span></div><div class="card reclist">'+recent.map(recRow).join('')+'</div></div>';
+  }
   $('pg-library').innerHTML=html;
   if(LIB_Q) renderSearch();
 }
-function catcard(val,icon,label,n,active){
-  const escv=String(val).replace(/'/g,"\\'");
-  const addBtn=(SESSION.isAdmin && val!=='__all')
-    ? '<button class="cardadd" title="Add Files / Videos here" onclick="event.stopPropagation();addToFolder(\''+escv+'\')">＋</button>' : '';
-  return '<div class="wcard'+(active?' on':'')+'" onclick="selectCat(\''+escv+'\')">'+addBtn+'<div class="wic">'+icon+'</div><div class="wc-t">'+esc(label)+'</div><div class="wc-n">'+n+' item'+(n!==1?'s':'')+'</div></div>';
-}
 function crumb(){
-  let h='<div class="crumb"><a href="#" onclick="navRoot();return false">🏠 Categories</a>';
-  if(CUR_CAT!==null){ const lab=CUR_CAT==='__all'?'All items':CUR_CAT; h+=' <span class="csep">▸</span> <a href="#" onclick="navCat();return false">'+esc(lab)+'</a>'; }
-  if(CUR_CAT!==null && CUR_WEEK!==null && CUR_WEEK!=='all'){ h+=' <span class="csep">▸</span> <span>'+(CUR_WEEK>0?'Week '+CUR_WEEK:'Unsorted')+'</span>'; }
+  let h='<div class="crumb"><a href="#" onclick="selectFolder(\'\');return false">🏠 Home</a>';
+  folderPath(CUR_FOLDER).forEach(f=>{ h+=' <span class="csep">▸</span> <a href="#" onclick="selectFolder(\''+f.id+'\');return false">'+esc(f.name)+'</a>'; });
   return h+'</div>';
 }
 function buildBrowse(){
-  // LEVEL 0 — category folders
-  if(CUR_CAT===null){
-    // merge created (possibly empty) folders with categories used by items
-    const used=ITEMS.map(catName);
-    const set=new Set([...FOLDERS, ...used]);
-    const cats=[...set].sort((a,b)=> a==='Uncategorized'?1 : b==='Uncategorized'?-1 : a.localeCompare(b));
-    let g='';
-    if(SESSION.isAdmin) g+='<button class="btn" style="margin:2px 0 16px" onclick="createFolder()">➕ Create Folder</button>';
-    let cards='<div class="wgrid">'+catcard('__all','🗂️','All items',ITEMS.length,false);
-    cats.forEach(c=>{ const n=catItems(c).length; cards+=catcard(c, c==='Uncategorized'?'📂':'🗃️', c, n, false); });
-    cards+='</div>';
-    return g+'<div class="psub2">Folders</div>'+cards;
+  const subs=childFolders(CUR_FOLDER), items=folderItems(CUR_FOLDER);
+  let html='';
+  if(CUR_FOLDER!=='') html+=crumb();
+  // admin create actions (center-aligned row)
+  if(SESSION.isAdmin){
+    html+='<div class="createrow">'+
+      '<button class="btn" onclick="createFolder()">➕ '+(CUR_FOLDER?'New Subfolder':'New Folder')+'</button>'+
+      '<button class="btn ghost" onclick="addContent()">📤 Add Content</button>'+
+      (CUR_FOLDER?'<button class="btn err ghost sm" onclick="delFolder(\''+CUR_FOLDER+'\')">🗑 Delete this folder</button>':'')+
+      '</div>';
   }
-  // within a category (or __all)
-  const pool=catItems(CUR_CAT);
-  const weeks=[...new Set(pool.map(i=>i.week||0))].sort((a,b)=>b-a);
-  let html=crumb();
-  if(SESSION.isAdmin && CUR_CAT!=='__all'){
-    html+='<button class="btn sm" style="margin:2px 0 10px" onclick="addToFolder(\''+esc(CUR_CAT).replace(/'/g,"\\'")+'\')">＋ Add Files / Videos</button>';
+  // sub-folders
+  if(subs.length){
+    html+='<div class="psub2">Folders</div><div class="wgrid">'+subs.map((f,i)=>folderCard(f,i)).join('')+'</div>';
   }
-  // LEVEL 1 — week folders inside the category
-  let wsel='<div class="psub2">Browse by week</div><div class="wgrid">'+
-    wcard('all','📚','All weeks',pool.length, CUR_WEEK==='all');
-  weeks.forEach(w=>{ const n=pool.filter(i=>(i.week||0)===w).length; wsel+=wcard(w, w>0?'🗓️':'📄', w>0?('Week '+w):'Unsorted', n, CUR_WEEK===w); });
-  html+=wsel+'</div>';
-  // LEVEL 2 — items
-  if(CUR_WEEK==='all'){
-    let idx=0;
-    weeks.forEach(w=>{
-      const list=pool.filter(i=>(i.week||0)===w), lab=w>0?('Week '+w):'Unsorted';
-      html+='<div class="wsec"><div class="whead"><span class="wtitle">'+lab+'</span><span class="wpill">'+list.length+' item'+(list.length!==1?'s':'')+'</span><span class="wline"></span></div>'+
-        '<div class="grid">'+list.map(it=>{ idx++; return itemCard(it,idx); }).join('')+'</div></div>';
-    });
-  } else if(CUR_WEEK!==null){
-    const shown=pool.filter(i=>(i.week||0)===CUR_WEEK);
-    const title=CUR_WEEK>0?('Week '+CUR_WEEK):'Unsorted';
-    html+='<div class="whead" style="margin-top:14px"><span class="wtitle">'+esc(title)+'</span><span class="wpill">'+shown.length+' item'+(shown.length!==1?'s':'')+'</span><span class="wline"></span></div>'+
-      (shown.length ? '<div class="grid">'+shown.map((it,i)=>itemCard(it,i+1)).join('')+'</div>'
-                    : '<div class="card" style="padding:36px;text-align:center;color:var(--muted)">No items in '+esc(title)+'.</div>');
+  // items in this folder
+  if(items.length){
+    html+='<div class="whead" style="margin-top:20px"><span class="wtitle">'+(CUR_FOLDER?'Content':'Loose items')+'</span><span class="wpill">'+items.length+' item'+(items.length!==1?'s':'')+'</span><span class="wline"></span></div>'+
+      '<div class="grid">'+items.map((it,i)=>itemCard(it,i+1)).join('')+'</div>';
+  }
+  if(!subs.length && !items.length){
+    const t=CUR_FOLDER?'This space is waiting for something special.':'Your collection begins here.';
+    const s=SESSION.isAdmin?(CUR_FOLDER?'Create a subfolder or add content to begin.':'Create your first folder or add content to get started.'):'Nothing here yet.';
+    html+='<div class="card empty"><div class="em-ic">'+FOLDER_SVG+'</div><div class="et">'+t+'</div><div class="es">'+s+'</div></div>';
   }
   return html;
 }
@@ -691,12 +739,14 @@ function renderSearch(){
   const sr=$('searchResults'), br=$('libBrowse'); if(!sr||!br) return;
   if(!LIB_Q){ sr.className='hide'; sr.innerHTML=''; br.className=''; return; }
   br.className='hide'; sr.className='';
-  const q=LIB_Q, matches=ITEMS.filter(it=>
-    (it.title||'').toLowerCase().includes(q) ||
+  const q=LIB_Q, matches=ITEMS.filter(it=>{
+    const fo=folderById(it.folder_id);
+    return (it.title||'').toLowerCase().includes(q) ||
     (it.tags||'').toLowerCase().includes(q) ||
     (it.description||'').toLowerCase().includes(q) ||
-    catName(it).toLowerCase().includes(q) ||
-    ('week '+(it.week||0)).includes(q) || String(it.type).includes(q));
+    (fo?fo.name.toLowerCase().includes(q):false) ||
+    String(it.type).includes(q);
+  });
   sr.innerHTML='<div class="whead"><span class="wtitle">Search results</span><span class="wpill">'+matches.length+' match'+(matches.length!==1?'es':'')+'</span><span class="wline"></span></div>'+
     (matches.length ? '<div class="grid">'+matches.map((it,i)=>itemCard(it,i+1)).join('')+'</div>'
                     : '<div class="card" style="padding:40px;text-align:center;color:var(--muted)">No items match "'+esc(LIB_Q)+'".</div>');
@@ -712,14 +762,13 @@ function itemCard(it,i){
   const img = it.thumb ? '<img src="'+esc(it.thumb)+'" loading="lazy" onerror="this.remove()">' : '';
   const locked = !!it.locked;
   const play = (!locked&&(it.type==='video'||it.type==='youtube')) ? '<div class="playb">▶</div>' : (locked?'<div class="playb lock">🔒</div>':'');
-  const wk = it.week>0 ? '<span class="badge b-mut">Week '+it.week+'</span>' : '<span class="badge b-mut">Unsorted</span>';
   const views = (it.views>0) ? '<span class="vcount">👁 '+it.views+'</span>' : '';
   const ab = availBadge(it);
   const adminActs = SESSION.isAdmin
     ? '<button class="iconbtn2" title="Edit" onclick="editItem(\''+it.id+'\')">✏</button><button class="iconbtn2 danger" title="Delete" onclick="delItem(\''+it.id+'\')">🗑</button>' : '';
   return '<div class="icard'+(locked?' locked':'')+'" style="animation-delay:'+Math.min(i*35,320)+'ms">'+
-    '<div class="ithumb" style="cursor:pointer" onclick="openItem(\''+it.id+'\')"><div class="ph">'+ICON[it.type]+'</div>'+img+'<div class="tov"></div>'+play+
-      '<div class="tchips"><span class="badge b-'+it.type+'">'+it.type+'</span>'+wk+'</div>'+views+(ab?'<div class="abwrap">'+ab+'</div>':'')+'</div>'+
+    '<div class="ithumb" style="cursor:pointer" onclick="openItem(\''+it.id+'\')"><div class="ph">'+(TYPE_SVG[it.type]||ICON[it.type])+'</div>'+img+'<div class="tov"></div>'+play+
+      '<div class="tchips"><span class="badge b-'+it.type+'">'+it.type+'</span></div>'+views+(ab?'<div class="abwrap">'+ab+'</div>':'')+'</div>'+
     '<div class="ibody">'+
       '<div class="ititle">'+esc(it.title)+'</div>'+
       (it.description?'<div class="idesc">'+esc(it.description)+'</div>':'')+
@@ -810,17 +859,21 @@ async function openChild(itemId, driveId, ftype, btn){
 }
 
 /* ---- add / edit item (admin) ---- */
-function catOptions(sel){
-  const cats=[...new Set([...FOLDERS, ...ITEMS.map(catName)])].filter(c=>c&&c!=='Uncategorized').sort();
-  return cats.map(c=>'<option value="'+esc(c)+'"'+(sel===c?' selected':'')+'>'+esc(c)+'</option>').join('');
+function folderOptions(sel){
+  // hierarchical options with path labels
+  const rows=[['','— Root (no folder) —']];
+  function walk(pid,depth){ childFolders(pid).forEach(f=>{ rows.push([f.id, '　'.repeat(depth)+'📁 '+f.name]); walk(f.id,depth+1); }); }
+  walk('',0);
+  return rows.map(r=>'<option value="'+esc(r[0])+'"'+(sel===r[0]?' selected':'')+'>'+esc(r[1])+'</option>').join('');
 }
 function renderAdd(){
-  const pre=ADD_PRECAT; ADD_PRECAT='';   // consume preset folder
+  const pre=ADD_PREFOLDER; ADD_PREFOLDER='';   // consume preset folder
+  const foName = pre ? ((folderById(pre)||{}).name||'') : '';
   $('pg-add').innerHTML =
-    '<h2 class="pt">Add content</h2><p class="psub">'+(pre?'Adding into <b style="color:var(--accent-ink)">'+esc(pre)+'</b> — pick a week and content.':'Organise as Category ▸ Week ▸ item. Set an optional time window to auto-lock / expire.')+'</p>'+
-    '<div class="card" style="padding:24px;max-width:660px">'+
-    '<div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:2;min-width:160px"><label class="fld">Type</label><select id="fType" onchange="addTypeChange()"><option value="video">🎬 Video (Drive)</option><option value="youtube">▶️ YouTube (unlisted link)</option><option value="pdf">📄 PDF (secure proxy)</option><option value="note">📝 Note</option><option value="folder">📁 Folder</option></select></div><div style="flex:1;min-width:110px"><label class="fld">Week</label><input class="inp" id="fWeek" type="number" min="0" value="1" placeholder="1"></div></div>'+
-    '<label class="fld">Category / Folder</label><div class="uprow"><input class="inp" id="fCat" list="catList" value="'+esc(pre)+'" placeholder="e.g. Course A, Batch 2025…"><datalist id="catList">'+catOptions(pre)+'</datalist></div>'+
+    '<div class="formwrap"><h2 class="pt brandwave" style="text-align:center">Add Content</h2><p class="psub" style="text-align:center">'+(foName?'Into folder <b style="color:var(--accent-ink)">'+esc(foName)+'</b>':'Pick a folder and content type')+'</p>'+
+    '<div class="card formcard">'+
+    '<label class="fld">Folder</label><select id="fFolder">'+folderOptions(pre)+'</select>'+
+    '<label class="fld">Type</label><select id="fType" onchange="addTypeChange()"><option value="video">🎬 Video (Drive)</option><option value="youtube">▶️ YouTube (unlisted link)</option><option value="pdf">📄 PDF (secure proxy)</option><option value="note">📝 Note</option><option value="folder">📂 Drive folder (files)</option></select>'+
     '<div id="fDriveWrap"><label class="fld">Drive link / ID</label><div class="uprow"><input class="inp" id="fDrive" placeholder="Paste a Drive link or upload →"><button class="btn ghost sm" id="fUpBtn" onclick="uploadContent(this)">⬆ Upload file</button></div></div>'+
     '<div id="fBodyWrap" class="hide"><label class="fld">Note text</label><textarea id="fBody" rows="6" placeholder="Write here…"></textarea></div>'+
     '<label class="fld">Title</label><input class="inp" id="fTitle" placeholder="Required">'+
@@ -828,9 +881,9 @@ function renderAdd(){
     '<label class="fld">Thumbnail (optional)</label><div class="uprow"><input class="inp" id="fThumb" placeholder="Paste an image URL or upload →"><button class="btn ghost sm" onclick="uploadThumbPick(this,\'fThumb\',\'fThumbPrev\')">⬆ Upload image</button></div><img id="fThumbPrev" class="thumbprev" alt="">'+
     '<div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:150px"><label class="fld">Available from (optional)</label><input class="inp" id="fFrom" type="datetime-local"></div><div style="flex:1;min-width:150px"><label class="fld">Available until (optional)</label><input class="inp" id="fUntil" type="datetime-local"></div></div>'+
     '<label class="fld">Tags (optional, comma-separated)</label><input class="inp" id="fTags">'+
-    '<button class="btn" style="margin-top:20px;width:100%" onclick="addItem()">Add to library 🚀</button>'+
+    '<button class="btn" style="margin-top:22px;width:100%" onclick="addItem()">Add to Vault 🚀</button>'+
     '<p style="color:var(--faint);font-size:11.5px;margin-top:14px">Time window locks content for members before “from” and after “until” (admins always see it). YouTube must be <b>Unlisted</b> (private won’t embed).</p>'+
-    '</div>';
+    '</div></div>';
 }
 function addTypeChange(){
   const t=$('fType').value;
@@ -910,14 +963,16 @@ async function uploadThumbPick(btn, targetId, prevId){
 async function addItem(){
   const type=$('fType').value, title=$('fTitle').value.trim();
   if(!title){ toast('Enter a title','err'); return; }
-  const payload={action:'addItem', type, title, week:$('fWeek').value, category:$('fCat').value.trim(),
+  const fid=$('fFolder').value;
+  const payload={action:'addItem', type, title, folder_id:fid,
     drive:$('fDrive').value.trim(), description:$('fDesc').value.trim(), thumb:$('fThumb').value.trim(), tags:$('fTags').value.trim(),
     avail_from:$('fFrom').value, avail_until:$('fUntil').value,
     body:(type==='note'?$('fBody').value:'')};
   const r=await api(payload);
   if(r.ok){
     toast('Added ✅','ok'); if(r.warn) toast(r.warn,'err');
-    document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('on',p.dataset.pg==='library'));
+    CUR_FOLDER=fid;   // land in the folder where it was added
+    document.querySelectorAll('.navbtn').forEach(p=>p.classList.toggle('on',p.dataset.pg==='library'));
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
     $('pg-library').classList.add('on');
     await loadLibrary();
@@ -933,7 +988,7 @@ function editItem(id){
   const curThumb = it.thumb && it.thumb.indexOf("drive.google.com/thumbnail")<0 && it.thumb.indexOf("i.ytimg.com")<0 ? it.thumb : '';
   openModal('<div class="mhead"><b>Edit item</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody">'+
     '<label class="fld">Title</label><input class="inp" id="eTitle" value="'+esc(it.title)+'">'+
-    '<div style="display:flex;gap:10px;flex-wrap:wrap"><div style="flex:2;min-width:150px"><label class="fld">Category / Folder</label><input class="inp" id="eCat" list="catListE" value="'+esc(it.category||'')+'"><datalist id="catListE">'+catOptions(it.category)+'</datalist></div><div style="flex:1;min-width:90px"><label class="fld">Week</label><input class="inp" id="eWeek" type="number" min="0" value="'+(it.week||0)+'"></div></div>'+
+    '<label class="fld">Folder</label><select id="eFolder">'+folderOptions(it.folder_id||'')+'</select>'+
     '<label class="fld">Description</label><input class="inp" id="eDesc" value="'+esc(it.description||'')+'">'+
     '<label class="fld">Thumbnail</label><div class="uprow"><input class="inp" id="eThumb" value="'+esc(curThumb)+'" placeholder="Image URL or upload →"><button class="btn ghost sm" onclick="uploadThumbPick(this,\'eThumb\',\'eThumbPrev\')">⬆ Upload</button></div><img id="eThumbPrev" class="thumbprev" alt="">'+
     '<div style="display:flex;gap:10px;flex-wrap:wrap"><div style="flex:1;min-width:150px"><label class="fld">Available from</label><input class="inp" id="eFrom" type="datetime-local" value="'+toLocalInput(it.avail_from)+'"></div><div style="flex:1;min-width:150px"><label class="fld">Available until</label><input class="inp" id="eUntil" type="datetime-local" value="'+toLocalInput(it.avail_until)+'"></div></div>'+
@@ -942,7 +997,7 @@ function editItem(id){
 }
 function toLocalInput(iso){ if(!iso) return ''; try{ const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes()); }catch(e){ return ''; } }
 async function saveEdit(id, isNote){
-  const p={action:'updateItem', id, title:$('eTitle').value.trim(), week:$('eWeek').value, category:$('eCat').value.trim(),
+  const p={action:'updateItem', id, title:$('eTitle').value.trim(), folder_id:$('eFolder').value,
     description:$('eDesc').value.trim(), thumb:$('eThumb').value.trim(), avail_from:$('eFrom').value, avail_until:$('eUntil').value};
   if(isNote) p.body=$('eBody').value;
   const r=await api(p);
@@ -1118,14 +1173,15 @@ function startCountdown(expiresIso, elId, onExpire){
 /* ============ ASSISTANT ============ */
 let BOT_LOADED=false;
 function toggleBot(){ const p=$('botPanel'); p.classList.toggle('on'); if(p.classList.contains('on') && !BOT_LOADED) initBot(); }
+const OWNER='Somnath';
 async function initBot(){
   BOT_LOADED=true;
-  botMsg('bot', 'Hi '+(SESSION?SESSION.name.split(' ')[0]:'there')+'! I can help with the library, shares and users. '+(SESSION&&SESSION.isAdmin?'If I don\'t know something, teach me. 🧠':'Ask away.'));
-  $('bchips').innerHTML=['how many videos','active shares','pending users','how to share'].map(c=>'<span class="bchip" onclick="botQuick(\''+c+'\')">'+c+'</span>').join('');
+  botMsg('bot', 'Hi '+(SESSION?SESSION.name.split(' ')[0]:'there')+'! 👋 I know everything about this vault — folders, uploads, YouTube, sharing, time-locks, accounts. Ask me anything. If I don\'t know, I\'ll offer to ping '+OWNER+'.');
+  $('bchips').innerHTML=['how to create folder','how to add video','how to share','youtube private?','how many items'].map(c=>'<span class="bchip" onclick="botQuick(\''+c.replace(/'/g,"\\'")+'\')">'+c+'</span>').join('');
   const r=await api({action:'botBrain'}, true);
   if(r.ok){ BOT_BRAIN=r; }
 }
-function botMsg(who, text){ const d=document.createElement('div'); d.className='bm '+who; d.innerHTML=esc(text).replace(/\n/g,'<br>'); $('bmsgs').appendChild(d); $('bmsgs').scrollTop=$('bmsgs').scrollHeight; }
+function botMsg(who, text){ const d=document.createElement('div'); d.className='bm '+who; d.innerHTML=esc(text).replace(/\n/g,'<br>'); $('bmsgs').appendChild(d); $('bmsgs').scrollTop=$('bmsgs').scrollHeight; return d; }
 function botQuick(t){ $('binp').value=t; botSend(); }
 function botSend(){
   const t=($('binp').value||'').trim(); if(!t) return; $('binp').value='';
@@ -1134,39 +1190,61 @@ function botSend(){
 }
 function botAnswer(q){
   const st=BOT_BRAIN.stats||{};
-  if(/^(hi|hey|hello|yo)\b/.test(q)) return 'Hey! What do you need?';
-  if(/thank|thanks|thx/.test(q)) return 'Anytime 😎';
-  if(/how many|video|item|pdf|week/.test(q)) return 'The library has '+(st.items||0)+' items across '+(st.weeks||0)+' weeks — '+(st.videos||0)+' videos and '+(st.pdfs||0)+' PDFs.';
-  if(/active share|share.*(active|count)|how many share|link/.test(q)) return (st.active_shares||0)+' share links are currently active.';
-  if(/pending|approval|approve/.test(q)) return (st.pending_users||0)+' users are awaiting approval'+((st.pending_users&&st.isAdmin)?' — approve them in the Users tab.':'.');
-  if(/how.*share|share.*how|time.?bound/.test(q)) return 'In the Dashboard, tap 🔗 on an item, pick a duration and copy the link. The countdown starts on the first open; when it ends, the viewer must log in.';
-  if(/how.*add|add.*how|upload/.test(q)) return 'Open Add Content (admin), choose a type, paste a Drive link or upload from your device, add a title and thumbnail.';
-  if(/help|what can you/.test(q)) return 'I can tell you item counts, active shares, pending users, and how to share or add. Try "how to share".';
+  if(/^(hi|hey|hello|yo|hii|namaste)/.test(q)) return 'Hey! What do you need? 😊';
+  if(/thank|thanks|thx|shukriya/.test(q)) return 'Anytime 😎';
+  if(/who are you|your name|what are you/.test(q)) return 'I\'m the '+BRAND+' Assistant — your in-app helper for folders, content, sharing and accounts.';
+  // counts
+  if(/how many|count|total|stats|items|videos/.test(q)) return 'Right now: '+(st.items||0)+' items ('+(st.videos||0)+' videos, '+(st.pdfs||0)+' PDFs) across '+(st.weeks||0)+' groups.';
+  if(/active share|how many share|share.*count/.test(q)) return (st.active_shares||0)+' share links are active right now.';
+  if(/pending|approval|approve/.test(q)) return (st.pending_users||0)+' users await approval'+((st.pending_users&&st.isAdmin)?' — Users tab me approve karo.':'.');
+  // how-to (folders)
+  if(/create.*folder|new folder|make.*folder|add folder/.test(q)) return 'Bottom se Home → "➕ New Folder" button. Naam daalo, ban gaya. Kisi folder ke andar jaake "➕ New Subfolder" se folder-ke-andar-folder bhi bana sakte ho.';
+  if(/subfolder|folder.*folder|nested|andar.*folder/.test(q)) return 'Haan — folder kholo, phir "➕ New Subfolder". Jitna chaho deep nest kar sakte ho.';
+  // add content
+  if(/how.*add|add.*content|add.*video|upload|kaise.*daal/.test(q)) return 'Folder kholo → "📤 Add Content" (ya folder card pe "＋"). Type chuno (Video/YouTube/PDF/Note), Drive link paste ya device se upload, title do → Add.';
+  if(/youtube/.test(q)) return 'YouTube type choose karo, unlisted link paste karo. Note: PRIVATE YouTube embed nahi hoti — sirf Unlisted. Apni video truly-private chahiye to Drive upload karo.';
+  if(/share|link|time.?bound|countdown/.test(q)) return 'Kisi item pe 🔗 → duration (ya Custom time) → link copy. Pehli baar khulte hi countdown chalu; khatam hote hi viewer ko login maangega.';
+  if(/time.?lock|available|expire|unlock|window|schedule/.test(q)) return 'Add/Edit me "Available from/until" set karo. Us window ke bahar members ko locked dikhega (🔒/⌛), admin ko hamesha khula.';
+  if(/watermark|leak|screenshot|record/.test(q)) return 'Har video/PDF pe viewer ka email faint overlay hota hai — screenshot/record leak ho to banda trace ho jaata hai.';
+  if(/password|forgot|reset|login|otp|mobile/.test(q)) return 'Login = mobile/email + password. Bhool gaye? "Forgot password" → registered email pe OTP → naya password.';
+  if(/role|admin|member|permission/.test(q)) return 'Roles: Super Admin > Admin > Member. Admins hi content/folders manage karte hain; Super Admin roles assign karta hai.';
+  if(/help|what can you|kya kar|options/.test(q)) return 'Puchho: "how to create folder", "how to add video", "how to share", "time lock", "youtube private?", ya "how many items".';
   const taught=BOT_BRAIN.taught||[];
   let best=null, bestScore=0;
   taught.forEach(t=>{ const words=t.q.toLowerCase().split(/\s+/); let s=0; words.forEach(w=>{ if(w.length>2 && q.indexOf(w)>=0) s++; }); if(s>bestScore){ bestScore=s; best=t; } });
   if(best && bestScore>=1) return best.a;
   return null;
 }
-async function botReply(origQ, ans){
+function botReply(origQ, ans){
   if(ans){ botMsg('bot', ans); return; }
-  if(SESSION && SESSION.isAdmin){
-    botMsg('bot', 'I don\'t know that yet. Teach me:');
-    const d=document.createElement('div'); d.className='bm bot';
-    d.innerHTML='<input class="inp" id="teachA" placeholder="Type the answer…" style="margin-bottom:6px"><button class="btn sm" onclick="botTeach(\''+esc(origQ).replace(/'/g,"\\'")+'\')">Teach 🧠</button>';
-    $('bmsgs').appendChild(d); $('bmsgs').scrollTop=$('bmsgs').scrollHeight;
-  } else {
-    botMsg('bot', 'Let me get a human on this…');
-    const r=await api({action:'botUnknown', q:origQ}, true);
-    const owner=(r&&r.owner)||'Somnath';
-    if(r&&r.mailed) botMsg('bot', 'I\'ve emailed '+owner+' your question. He\'ll contact you as soon as possible. 📩');
-    else botMsg('bot', 'I\'ve noted your question — '+owner+' will get back to you soon.');
-  }
+  // unknown → offer to assign to the owner (for everyone)
+  botMsg('bot', 'Ye mujhe abhi nahi aata. 🤔 Kya main '+OWNER+' ko ye assign kar du? Woh aapse jaldi contact karega.');
+  const d=document.createElement('div'); d.className='bm bot';
+  const eq=esc(origQ).replace(/'/g,"\\'");
+  let btns='<button class="btn sm" onclick="assignOwner(\''+eq+'\',this)">✅ Haan, '+OWNER+' ko assign karo</button>';
+  if(SESSION && SESSION.isAdmin) btns+='<button class="btn ghost sm" style="margin-left:6px" onclick="showTeach(\''+eq+'\',this)">🧠 Main sikha du</button>';
+  d.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:6px">'+btns+'</div>';
+  $('bmsgs').appendChild(d); $('bmsgs').scrollTop=$('bmsgs').scrollHeight;
+}
+async function assignOwner(q, btn){
+  btn.disabled=true; btn.textContent='Sending…';
+  const r=await api({action:'botUnknown', q}, true);
+  const owner=(r&&r.owner)||OWNER;
+  if(r&&r.mailed) botMsg('bot', '✅ Maine '+owner+' ko aapka sawaal mail kar diya. Woh ASAP aapse contact karega. 📩');
+  else botMsg('bot', '📝 Note kar liya — '+owner+' jaldi reply karega.');
+  if(btn.parentElement) btn.parentElement.remove();
+}
+function showTeach(q, btn){
+  if(btn.parentElement) btn.parentElement.remove();
+  const d=document.createElement('div'); d.className='bm bot';
+  d.innerHTML='<input class="inp" id="teachA" placeholder="Iska jawab likho…" style="margin-bottom:6px"><button class="btn sm" onclick="botTeach(\''+q+'\')">Teach 🧠</button>';
+  $('bmsgs').appendChild(d); $('bmsgs').scrollTop=$('bmsgs').scrollHeight;
+  const i=$('teachA'); if(i) i.focus();
 }
 async function botTeach(q){
-  const a=($('teachA').value||'').trim(); if(!a){ toast('Type the answer','err'); return; }
+  const a=($('teachA').value||'').trim(); if(!a){ toast('Jawab likho','err'); return; }
   const r=await api({action:'botTeach', q, a});
-  if(r.ok){ toast('Learned 🧠','ok'); BOT_BRAIN.taught.push({q,a}); botMsg('bot','Got it — I\'ll remember that next time.'); }
+  if(r.ok){ toast('Learned 🧠','ok'); BOT_BRAIN.taught.push({q,a}); botMsg('bot','Got it — agli baar yaad rahega.'); }
   else toast(r.msg||'Failed','err');
 }
 

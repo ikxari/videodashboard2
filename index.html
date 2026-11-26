@@ -216,6 +216,10 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 .lockb.exp{color:#ffb0ba;border-color:rgba(255,107,125,.3)}
 .playb.lock{background:rgba(8,8,10,.8);color:#ffd79a;opacity:1;box-shadow:none}
 .icard.locked .ithumb img,.icard.locked .ph{filter:grayscale(.5) brightness(.6)}
+/* new-folder card */
+.newfolder{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px dashed var(--line2);border-radius:var(--r-lg);padding:14px 16px;cursor:pointer;margin-bottom:12px;transition:border-color .2s,background .2s;max-width:320px}
+.newfolder:hover{border-color:var(--accent);background:rgba(201,162,75,.06)}
+.newfolder .wc-t{font-weight:700;font-size:15px}.newfolder .wc-n{color:var(--muted);font-size:12px}
 /* leak-deterrent watermark overlay */
 .wm{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;display:flex;flex-wrap:wrap;gap:34px 46px;padding:24px;transform:rotate(-24deg) scale(1.5);transform-origin:center;opacity:.07}
 .wm span{font-family:var(--font-m);font-size:12px;color:#f0d9a0;white-space:nowrap;letter-spacing:1px}
@@ -349,15 +353,17 @@ h2.pt{font-size:26px;font-weight:700;margin-bottom:4px}
 
 <script>
 /* ============ CONFIG ============ */
-const API_DEFAULT = 'https://script.google.com/macros/s/AKfycbwB6m6GZ1trLEAEg-yhVIEknjXdPASMxFDCDRHmOJLtJYhuyFAK6RZUNn8jXq7NfDuJTw/exec';
+const API_DEFAULT = 'https://script.google.com/macros/s/AKfycbw5Vsd_bKZyl2fCM7FPgVhXehrRYXKfn9EUmA38CrDpoUxtDziRcJ_ocm_Iy9ih1Tur3Q/exec';
 let API = localStorage.getItem('aur_api') || API_DEFAULT;
 const BRAND = 'Aurevia';
-const APP_VERSION = '2.2.0';
+const APP_VERSION = '2.3.1';
 function apiOk(u){ return /\/macros\/(s|.*\/s)\/[^/]+\/exec$/.test(String(u||'')); }
 
 /* ============ STATE ============ */
 let SESSION = null;
 let ITEMS = [];
+let FOLDERS = [];
+let ADD_PRECAT = '';
 let CD_TIMER = null, SHARE_ID = null, BOT_BRAIN = {taught:[], stats:{}};
 
 /* ============ HELPERS ============ */
@@ -547,7 +553,7 @@ async function loadLibrary(){
   if(ITEMS.length) renderLibrary();   // instant from cache, then refresh silently
   else $('pg-library').innerHTML='<h2 class="pt">Dashboard</h2><p class="psub">Loading…</p>';
   const r=await api({action:'listItems'}, true);
-  if(r.ok){ ITEMS=r.items||[]; renderLibrary(); }
+  if(r.ok){ ITEMS=r.items||[]; FOLDERS=r.folders||[]; renderLibrary(); }
   else if(!ITEMS.length){ $('pg-library').innerHTML='<h2 class="pt">Dashboard</h2><p class="psub" style="color:var(--err)">'+esc(r.msg||'Failed')+'</p>'; }
 }
 let CUR_CAT = null;    // null = show category folders; '__all' = all categories; else category name
@@ -558,6 +564,17 @@ function selectWeek(w){ CUR_WEEK = (w==='all') ? 'all' : Number(w); renderLibrar
 function navRoot(){ CUR_CAT=null; CUR_WEEK=null; renderLibrary(); }
 function navCat(){ CUR_WEEK=null; renderLibrary(); }
 function catItems(c){ return (c==='__all') ? ITEMS.slice() : ITEMS.filter(i=>catName(i)===c); }
+function createFolder(){
+  openModal('<div class="mhead"><b>➕ New folder</b><button class="x" onclick="closeModal()">×</button></div><div class="mbody"><label class="fld">Folder / Category name</label><input class="inp" id="nfName" placeholder="e.g. Course A, Batch 2025…" onkeydown="if(event.key===\'Enter\')saveFolder()"><button class="btn" style="margin-top:16px;width:100%" onclick="saveFolder()">Create folder</button></div>');
+  setTimeout(()=>{ const i=$('nfName'); if(i) i.focus(); },50);
+}
+async function saveFolder(){
+  const name=($('nfName').value||'').trim(); if(!name){ toast('Enter a name','err'); return; }
+  const r=await api({action:'createFolder', name});
+  if(!r.ok){ toast(r.msg||'Failed','err'); return; }
+  FOLDERS=r.folders||FOLDERS; toast(r.msg||'Folder created ✅','ok'); closeModal(); selectCat(r.name||name);
+}
+function addToFolder(c){ ADD_PRECAT=c; go('add'); }
 function ago(ts){
   if(!ts) return ''; const s=Math.floor((Date.now()-ts)/1000);
   if(s<60) return 'just now';
@@ -610,16 +627,24 @@ function crumb(){
 function buildBrowse(){
   // LEVEL 0 — category folders
   if(CUR_CAT===null){
-    const cats=[...new Set(ITEMS.map(catName))].sort((a,b)=> a==='Uncategorized'?1 : b==='Uncategorized'?-1 : a.localeCompare(b));
-    let g='<div class="psub2">Browse by category</div><div class="wgrid">'+
-      catcard('__all','🗂️','All items',ITEMS.length,false);
-    cats.forEach(c=>{ g+=catcard(c, c==='Uncategorized'?'📂':'🗃️', c, catItems(c).length, false); });
-    return g+'</div>';
+    // merge created (possibly empty) folders with categories used by items
+    const used=ITEMS.map(catName);
+    const set=new Set([...FOLDERS, ...used]);
+    const cats=[...set].sort((a,b)=> a==='Uncategorized'?1 : b==='Uncategorized'?-1 : a.localeCompare(b));
+    let g='';
+    if(SESSION.isAdmin) g+='<button class="btn" style="margin:2px 0 16px" onclick="createFolder()">➕ Create Folder</button>';
+    let cards='<div class="wgrid">'+catcard('__all','🗂️','All items',ITEMS.length,false);
+    cats.forEach(c=>{ const n=catItems(c).length; cards+=catcard(c, c==='Uncategorized'?'📂':'🗃️', c, n, false); });
+    cards+='</div>';
+    return g+'<div class="psub2">Folders</div>'+cards;
   }
   // within a category (or __all)
   const pool=catItems(CUR_CAT);
   const weeks=[...new Set(pool.map(i=>i.week||0))].sort((a,b)=>b-a);
   let html=crumb();
+  if(SESSION.isAdmin && CUR_CAT!=='__all'){
+    html+='<button class="btn sm" style="margin:2px 0 10px" onclick="addToFolder(\''+esc(CUR_CAT).replace(/'/g,"\\'")+'\')">＋ Add Files / Videos</button>';
+  }
   // LEVEL 1 — week folders inside the category
   let wsel='<div class="psub2">Browse by week</div><div class="wgrid">'+
     wcard('all','📚','All weeks',pool.length, CUR_WEEK==='all');
@@ -773,15 +798,16 @@ async function openChild(itemId, driveId, ftype, btn){
 
 /* ---- add / edit item (admin) ---- */
 function catOptions(sel){
-  const cats=[...new Set(ITEMS.map(catName))].filter(c=>c&&c!=='Uncategorized').sort();
+  const cats=[...new Set([...FOLDERS, ...ITEMS.map(catName)])].filter(c=>c&&c!=='Uncategorized').sort();
   return cats.map(c=>'<option value="'+esc(c)+'"'+(sel===c?' selected':'')+'>'+esc(c)+'</option>').join('');
 }
 function renderAdd(){
+  const pre=ADD_PRECAT; ADD_PRECAT='';   // consume preset folder
   $('pg-add').innerHTML =
-    '<h2 class="pt">Add content</h2><p class="psub">Organise as Category ▸ Week ▸ item. Set an optional time window to auto-lock / expire.</p>'+
+    '<h2 class="pt">Add content</h2><p class="psub">'+(pre?'Adding into <b style="color:var(--accent-ink)">'+esc(pre)+'</b> — pick a week and content.':'Organise as Category ▸ Week ▸ item. Set an optional time window to auto-lock / expire.')+'</p>'+
     '<div class="card" style="padding:24px;max-width:660px">'+
     '<div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:2;min-width:160px"><label class="fld">Type</label><select id="fType" onchange="addTypeChange()"><option value="video">🎬 Video (Drive)</option><option value="youtube">▶️ YouTube (unlisted link)</option><option value="pdf">📄 PDF (secure proxy)</option><option value="note">📝 Note</option><option value="folder">📁 Folder</option></select></div><div style="flex:1;min-width:110px"><label class="fld">Week</label><input class="inp" id="fWeek" type="number" min="0" value="1" placeholder="1"></div></div>'+
-    '<label class="fld">Category / Folder</label><div class="uprow"><input class="inp" id="fCat" list="catList" placeholder="e.g. Course A, Batch 2025…"><datalist id="catList">'+catOptions('')+'</datalist></div>'+
+    '<label class="fld">Category / Folder</label><div class="uprow"><input class="inp" id="fCat" list="catList" value="'+esc(pre)+'" placeholder="e.g. Course A, Batch 2025…"><datalist id="catList">'+catOptions(pre)+'</datalist></div>'+
     '<div id="fDriveWrap"><label class="fld">Drive link / ID</label><div class="uprow"><input class="inp" id="fDrive" placeholder="Paste a Drive link or upload →"><button class="btn ghost sm" id="fUpBtn" onclick="uploadContent(this)">⬆ Upload file</button></div></div>'+
     '<div id="fBodyWrap" class="hide"><label class="fld">Note text</label><textarea id="fBody" rows="6" placeholder="Write here…"></textarea></div>'+
     '<label class="fld">Title</label><input class="inp" id="fTitle" placeholder="Required">'+
